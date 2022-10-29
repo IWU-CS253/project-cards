@@ -8,9 +8,14 @@ CREATE TABLE cards (
 );
 
 CREATE TABLE collection (
-
+    card_id INT,
+    name VARCHAR(20),
+    rank INT
 );
 
 CREATE TABLE store (
-
+    card_id INT,
+    name VARCHAR(20),
+    rank INT,
+    price INT
 );
