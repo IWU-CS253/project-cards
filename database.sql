@@ -3,5 +3,4 @@ CREATE TABLE cards (
     name VARCHAR(20),
     rank INT,
     type VARCHAR(5),
-
-)
+);
