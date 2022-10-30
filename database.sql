@@ -1,3 +1,4 @@
+-- total cards in application table
 CREATE TABLE cards (
     card_id INT PRIMARY KEY,
     name VARCHAR(20),
@@ -7,12 +8,14 @@ CREATE TABLE cards (
     amount INT
 );
 
+-- user's collection of cards table
 CREATE TABLE collection (
     card_id INT,
     name VARCHAR(20),
     rank INT
 );
 
+-- cards to be shown in the store table
 CREATE TABLE store (
     card_id INT,
     name VARCHAR(20),
