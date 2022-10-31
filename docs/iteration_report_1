@@ -1,0 +1,42 @@
+
+**Responsibilities:**
+
+This iteration, Eric and Terascence were responsible for setting up the database in SQL which will include three tables for storing all of the existing cards, 
+all of the cards in a user collection, and all of the cards in the marketplace. Dino was responsible for setting up very early versions of the html files for 
+the platform’s main pages, and Karthi was responsible for the request handlers (Changed to some basic html structures during the week due to no buttons that 
+have actions besides switching between links) we will use to navigate between these pages. Garrett was responsible for setting up some unit testing for the 
+basic functionality of switching between pages and displaying some database information. 
+
+**What was completed: **
+
+	Dino set up html files outlining the content we want to include on each of our main pages- just using text in place of some of the actual functionality which 
+  has not been implemented yet. Garrett set up his own development branch that he plans to use throughout the project. He also wrote some unit tests into his 
+  development branch that was later merged into the main branch with the additions everyone else made. Eric wrote a few tables intended to be the basis for the 
+  database. It will probably change a lot as time goes on. Karthi added links to the website connecting to different urls to make sure that users can access all 
+  features of the website.
+
+**What was not finished: **
+
+	As a group, we completed all of the tasks we set out to do at the start of the iteration. 
+
+**Issues we ran into: **
+
+	We had a bit of trouble using git to share work. Eventually, we straightened out our issues, but it was a hitch in our plan since some of the work for this 
+  iteration was dependent on other parts of the work being completed. Going forward, we should avoid assigning work during the same iteration as another 
+  element that must be completed first. If we absolutely need to do it, the group member working on the dependency will just have to be sure to start very early. 
+
+**Adjustments to overall design:**
+
+	So far, our overall design has stayed pretty much intact. Since we are just putting together a very early skeleton version of the app, 
+  we haven’t run into any issues significant enough to necessitate changes to our design. 
+
+**Helpful tools/approaches: **
+
+	It is helpful to meet in person at least once and stay in constant contact through snapchat so we can easily find how our group mates are progressing on 
+  their parts. This is especially important when some work is dependent on the product of another member’s work, because it must be merged before that section 
+  of work can begin.
+
+**Plan for next iteration: **
+
+**	**Flesh out the tables in the database more by planning what a card will look like and what parts of a card matter not only to the user but to the 
+back-end of the application as well. We will also need to update the html now that we can utilize card objects and attributes from the database. 
