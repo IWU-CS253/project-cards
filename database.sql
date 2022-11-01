@@ -2,10 +2,10 @@
 CREATE TABLE cards (
     card_id INT PRIMARY KEY,
     name VARCHAR(20),
+
+    -- 5 ranks in increasing rarity
     rank INT,
-    type VARCHAR(5),
-    pack VARCHAR(10),
-    amount INT
+    price INT
 );
 
 -- user's collection of cards table
