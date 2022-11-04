@@ -22,3 +22,10 @@ CREATE TABLE store (
     rank INT,
     price INT
 );
+
+CREATE TABLE users (
+    numeric_id INT PRIMARY KEY,
+    user_id INT NOT NULL
+    name VARCHAR(20) UNIQUE NOT NULL,
+    email VARCHAR(20) UNIQUE NOT NULL
+)
