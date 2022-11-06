@@ -1,14 +1,22 @@
-
 {% extends "layout.html" %}
 {% block body %}
+
+  <form action="{{ url_for('show_entries') }}" method="post" class="home-button">
+      <button type="button" class="btn btn-primary btn-lg">Home</button>
+  </form>
   <div class="container text-center">
-        <dl>
-            <div class="col-8">
+  <div class="row justify-content-start">
+      <dl>
+          <div class="col-12">
               <dt>Search Marketplace:
-              <dd><input class = 'form-control form-control-lg' type="text" size="30" name="marketsearch">
-            </div>
-        </dl>
+              <dd><input class = 'form-control form-control-lg' type="text" size="30" name="market search">
           </div>
+      </dl>
+  </div>
+      <div class="col-12">
+          <button class="btn btn-primary" type="submit">Search</button>
+      </div>
+  </div>
 
     <h1>Pack for sale here</h1>
     <h2> price</h2>
@@ -40,7 +48,5 @@
     <td>$500</td>
   </tr>
 </table>
-
-
 
 {% endblock %}
