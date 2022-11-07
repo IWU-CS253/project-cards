@@ -58,7 +58,7 @@ def show_entries():
 
 @app.route('/your_inventory')
 def your_inventory():
-    return render_template('user_collection.html')
+    return render_template('your_inventory.html')
 
 
 @app.route('/marketplace')
@@ -110,6 +110,7 @@ def login():
 
  #@app.route('/logout')
  #def logout():
- #    session.pop('logged_in', None)
- #    flash('You were logged out')
- #    return redirect(url_foadd r('login'))
+#   session.pop('logged_in', None)
+#   flash('You were logged out')
+#   return redirect(url_foadd r('login'))
+     

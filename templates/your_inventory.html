@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block body %}
+    {% for card in collection %}
+            <ul>
+                <input type="hidden" name="id" value = "{{ card.card_id }}" class="card-id">
+                <a>{{ card.name }}</a>
+                <a>{{ card.rank }}</a>
+            </ul>
+    {% endfor %}
+
+{% endblock %}
