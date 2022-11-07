@@ -5,8 +5,10 @@ CREATE TABLE cards (
 
     -- 5 ranks in increasing rarity
     rank INT,
-    price INT
 );
+
+-- pack of 51 cards with a food theme
+.import 'FOOD_PACK.csv' cards --csv
 
 -- user's collection of cards table
 CREATE TABLE collection (
