@@ -22,6 +22,7 @@ class FlaskrTestCase(unittest.TestCase):
     if __name__ == '__main__':
         unittest.main()
 
+
 class FlaskrTestCase(unittest.TestCase):
 
     def setUp(self):
