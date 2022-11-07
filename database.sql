@@ -4,7 +4,7 @@ CREATE TABLE cards (
     name VARCHAR(20),
 
     -- 5 ranks in increasing rarity
-    rank INT,
+    rank INT
 );
 
 -- pack of 51 cards with a food theme
