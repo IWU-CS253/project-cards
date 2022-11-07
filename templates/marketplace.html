@@ -1,52 +1,96 @@
 {% extends "layout.html" %}
 {% block body %}
 
-  <form action="{{ url_for('show_entries') }}" method="post" class="home-button">
-      <button type="button" class="btn btn-primary btn-lg">Home</button>
-  </form>
-  <div class="container text-center">
-  <div class="row justify-content-start">
-      <dl>
-          <div class="col-12">
-              <dt>Search Marketplace:
-              <dd><input class = 'form-control form-control-lg' type="text" size="30" name="market search">
-          </div>
-      </dl>
-  </div>
-      <div class="col-12">
-          <button class="btn btn-primary" type="submit">Search</button>
-      </div>
-  </div>
+<h1>Marketplace</h1>
 
-    <h1>Pack for sale here</h1>
-    <h2> price</h2>
-    <h1>Pack for sale here</h1>
-    <h2> price</h2>
-<table>
-  <tr>
-    <th>Card</th>
-    <th>Price</th>
-  </tr>
-  <tr>
-    <td>Card 1</td>
-    <td>$100</td>
-  </tr>
-  <tr>
-    <td>Card 2</td>
-    <td>$200</td>
-  </tr>
-  <tr>
-    <td>Card 3</td>
-    <td>$300</td>
-  </tr>
-    <tr>
-    <td>Card 4</td>
-    <td>$400</td>
-  </tr>
-    <tr>
-    <td>Card 5</td>
-    <td>$500</td>
-  </tr>
-</table>
+    <div class="container text-center">
+        <div class="row justify-content-start">
+            <dl>
+                <div class="col-12">
+                    <dt>Search Marketplace:
+                    <dd><input class='form-control form-control-lg' type="text" size="30" name="market search">
+                </div>
+            </dl>
+        </div>
+        <div class="col-12">
+            <button class="btn btn-primary" type="submit">Search</button>
+        </div>
+    </div>
+
+    <div class="container text-center">
+        <div class="row">
+            <div class="col">
+                <h1>Pack for sale</h1>
+                <h2>Price</h2>
+            </div>
+            <div class="col">
+                <h1>Pack for sale</h1>
+                <h2>Price</h2>
+            </div>
+        </div>
+    </div>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Card</th>
+            <th scope="col">Price</th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Card</td>
+            <td>Price</td>
+            <td>
+                <form action="{{ url_for('your_inventory') }}" method="post" class="buy-button">
+                    <button type="button" class="btn btn-primary btn-lg">Buy</button>
+                </form>
+            </td>
+        </tr>
+        <tr>
+            <td>Card 2</td>
+            <td>Price</td>
+            <td>
+                <form action="{{ url_for('your_inventory') }}" method="post" class="buy-button">
+                    <button type="button" class="btn btn-primary btn-lg">Buy</button>
+                </form>
+            </td>
+        </tr>
+        <tr>
+            <td>Card 3</td>
+            <td>Price</td>
+            <td>
+                <form action="{{ url_for('your_inventory') }}" method="post" class="buy-button">
+                    <button type="button" class="btn btn-primary btn-lg">Buy</button>
+                </form>
+            </td>
+        </tr>
+        <tr>
+            <td>Card 4</td>
+            <td>Price</td>
+            <td>
+                <form action="{{ url_for('your_inventory') }}" method="post" class="buy-button">
+                    <button type="button" class="btn btn-primary btn-lg">Buy</button>
+                </form>
+            </td>
+        </tr>
+        <tr>
+            <td>Card 5</td>
+            <td>Price</td>
+            <td>
+                <form action="{{ url_for('your_inventory') }}" method="post" class="buy-button">
+                    <button type="button" class="btn btn-primary btn-lg">Buy</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="container text-center">
+          <form action="{{ url_for('show_entries') }}" method="post" class="home-button">
+              <button type="button" class="btn btn-primary btn-lg">Home</button>
+          </form>
+    </div>
 
 {% endblock %}
