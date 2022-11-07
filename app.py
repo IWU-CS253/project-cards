@@ -1,6 +1,7 @@
 import os
 from sqlite3 import dbapi2 as sqlite3
-from flask import Flask, request, g, redirect, url_for, render_template, flash
+from flask import Flask, request, g, redirect, url_for, render_template, flash, session
+import werkzeug
 
 app = Flask(__name__)
 
@@ -52,12 +53,12 @@ def close_db(error):
 
 @app.route('/')
 def show_entries():
-    return render_template('home.html')
+    return render_template('login.html')
 
 
 @app.route('/your_inventory')
 def your_inventory():
-    return render_template('user_collection.html')
+    return render_template('your_inventory.html')
 
 
 @app.route('/marketplace')
@@ -68,3 +69,48 @@ def marketplace():
 @app.route('/connect_with_friends')
 def connect_with_friends():
     return render_template('friends.html')
+
+
+@app.route('/new_user_info', methods=['POST'])
+def new_user_info():
+    return render_template('create_user.html')
+
+
+@app.route('/create_user', methods=['POST'])
+def create_user():
+    db = get_db()
+    chosen_username = request.form['choose_username']
+    hashed_pw = werkzeug.security.generate_password_hash(request.form['choose_password'], method='pbkdf2:sha256',
+                                                         salt_length=16)
+    chosen_email = request.form['choose_email']
+    db.execute('insert into users (username, password, email) values (?, ?, ?)',
+               [chosen_username, hashed_pw, chosen_email])
+    db.commit()
+    return render_template('login.html')
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    db = get_db()
+    pswd = db.execute("SELECT password FROM users WHERE username=?", [request.args['username']])
+    pw_check = pswd.fetchall()
+    #commented this block out because if the username is invalid, the query will fail
+    #so we dont need to check it explicitly
+    #if request.args['username'] != username:
+    #    error = 'Invalid username'
+    if not werkzeug.security.check_password_hash(pw_check, request.args['password']):
+        error = 'Invalid password'
+    else:
+        session['logged_in'] = True
+        flash('You were logged in')
+        return redirect(url_for('show_entries'))
+    return render_template('home.html', error=error)
+
+
+ #@app.route('/logout')
+ #def logout():
+#   session.pop('logged_in', None)
+#   flash('You were logged out')
+#   return redirect(url_foadd r('login'))
+     
