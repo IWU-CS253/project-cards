@@ -6,6 +6,7 @@ import tempfile
 # Some unit tests taken from past Flaskr assignments (source: https://sun.iwu.edu/~mliffito/flask_tutorial/testing.html)
 # This unit tests file is going to be an ongoing file as we continue to add new features and update our application.
 
+
 class FlaskrTestCase(unittest.TestCase):
 
     def setUp(self):
@@ -21,6 +22,7 @@ class FlaskrTestCase(unittest.TestCase):
 
     if __name__ == '__main__':
         unittest.main()
+
 
 class FlaskrTestCase(unittest.TestCase):
 
