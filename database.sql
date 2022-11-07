@@ -5,9 +5,11 @@ CREATE TABLE cards (
     name VARCHAR(20),
 
     -- 5 ranks in increasing rarity
-    rank INT,
-    price INT
+    rank INT
 );
+
+-- pack of 51 cards with a food theme
+.import 'FOOD_PACK.csv' cards --csv
 
 -- user's collection of cards table
 drop table if exists collection;
