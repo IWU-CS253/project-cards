@@ -51,6 +51,11 @@ def close_db(error):
         g.sqlite_db.close()
 
 
+@app.route('/home')
+def home():
+    return render_template('home.html')
+
+
 @app.route('/')
 def show_entries():
     return render_template('login.html')
@@ -89,28 +94,34 @@ def create_user():
     return render_template('login.html')
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['POST'])
 def login():
     error = None
     db = get_db()
-    pswd = db.execute("SELECT password FROM users WHERE username=?", [request.args['username']])
-    pw_check = pswd.fetchall()
+    username_list = db.execute("SELECT username FROM users")
+    if username_list.count(request.form['username']) != 1:
+        flash('incorrect username')
+        return redirect(url_for('show_entries'))
+    pswd = db.execute("SELECT password FROM users WHERE username=?", [request.form['username']])
+    pw_check = pswd.fetchone()
     #commented this block out because if the username is invalid, the query will fail
     #so we dont need to check it explicitly
     #if request.args['username'] != username:
     #    error = 'Invalid username'
-    if not werkzeug.security.check_password_hash(pw_check, request.args['password']):
+    if not werkzeug.security.check_password_hash(pw_check['password'], request.form['password']):
         error = 'Invalid password'
+        flash('incorrect password')
+        return redirect(url_for('show_entries'))
     else:
         session['logged_in'] = True
         flash('You were logged in')
-        return redirect(url_for('show_entries'))
-    return render_template('home.html', error=error)
+        return redirect(url_for('home'))
+    return redirect(url_for('home'))
 
 
- #@app.route('/logout')
- #def logout():
+#@app.route('/logout')
+#def logout():
 #   session.pop('logged_in', None)
 #   flash('You were logged out')
-#   return redirect(url_foadd r('login'))
+#   return redirect(url_for('login'))
      
