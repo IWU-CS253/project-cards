@@ -98,12 +98,11 @@ def create_user():
 def login():
     error = None
     db = get_db()
-    username_list = db.execute("SELECT username FROM users")
-    if username_list.count(request.form['username']) != 1:
-        flash('incorrect username')
-        return redirect(url_for('show_entries'))
     pswd = db.execute("SELECT password FROM users WHERE username=?", [request.form['username']])
     pw_check = pswd.fetchone()
+    if pw_check is None:
+        flash('invalid username')
+        return redirect(url_for('show_entries'))
     #commented this block out because if the username is invalid, the query will fail
     #so we dont need to check it explicitly
     #if request.args['username'] != username:
