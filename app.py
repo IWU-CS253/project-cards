@@ -51,6 +51,11 @@ def close_db(error):
         g.sqlite_db.close()
 
 
+@app.route('/home')
+def home():
+    return render_template('home.html')
+
+
 @app.route('/')
 def show_entries():
     return render_template('login.html')
@@ -71,7 +76,7 @@ def connect_with_friends():
     return render_template('friends.html')
 
 
-@app.route('/new_user_info', methods=['POST'])
+@app.route('/new_user_info', methods=['GET'])
 def new_user_info():
     return render_template('create_user.html')
 
@@ -80,37 +85,49 @@ def new_user_info():
 def create_user():
     db = get_db()
     chosen_username = request.form['choose_username']
+    user_exists = db.execute("SELECT password FROM users WHERE username=?", [chosen_username])
+    user_exists_check = user_exists.fetchone()
+    if user_exists_check:
+        flash('username already taken')
+        return redirect(url_for('new_user_info'))
+
     hashed_pw = werkzeug.security.generate_password_hash(request.form['choose_password'], method='pbkdf2:sha256',
                                                          salt_length=16)
     chosen_email = request.form['choose_email']
+    email_exists = db.execute("SELECT password FROM users WHERE email=?", [chosen_email])
+    email_exists_check = email_exists.fetchone()
+    if email_exists_check:
+        flash('email already taken')
+        return redirect(url_for('new_user_info'))
     db.execute('insert into users (username, password, email) values (?, ?, ?)',
                [chosen_username, hashed_pw, chosen_email])
     db.commit()
     return render_template('login.html')
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['POST'])
 def login():
     error = None
     db = get_db()
-    pswd = db.execute("SELECT password FROM users WHERE username=?", [request.args['username']])
-    pw_check = pswd.fetchall()
-    #commented this block out because if the username is invalid, the query will fail
-    #so we dont need to check it explicitly
-    #if request.args['username'] != username:
-    #    error = 'Invalid username'
-    if not werkzeug.security.check_password_hash(pw_check, request.args['password']):
+    pswd = db.execute("SELECT password FROM users WHERE username=?", [request.form['username']])
+    pw_check = pswd.fetchone()
+    if pw_check is None:
+        flash('invalid username')
+        return redirect(url_for('show_entries'))
+    if not werkzeug.security.check_password_hash(pw_check['password'], request.form['password']):
         error = 'Invalid password'
+        flash('incorrect password')
+        return redirect(url_for('show_entries'))
     else:
         session['logged_in'] = True
         flash('You were logged in')
-        return redirect(url_for('show_entries'))
-    return render_template('home.html', error=error)
+        return redirect(url_for('home'))
+    return redirect(url_for('home'))
 
 
- #@app.route('/logout')
- #def logout():
+#@app.route('/logout')
+#def logout():
 #   session.pop('logged_in', None)
 #   flash('You were logged out')
-#   return redirect(url_foadd r('login'))
+#   return redirect(url_for('login'))
      
