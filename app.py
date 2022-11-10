@@ -2,6 +2,7 @@ import os
 from sqlite3 import dbapi2 as sqlite3
 from flask import Flask, request, g, redirect, url_for, render_template, flash, session
 import werkzeug
+from random import choices
 
 app = Flask(__name__)
 
@@ -114,3 +115,23 @@ def login():
 #   flash('You were logged out')
 #   return redirect(url_foadd r('login'))
      
+
+def pull_cards():
+    """Returns 5 random cards from the total cards table using rank
+            to determine the probability of pulling each card"""
+    db = get_db()
+    card_weight = db.execute('SELECT rank FROM cards')
+    ranks = card_weight.fetchall()
+    ranks = [rank[0] for rank in ranks]
+    for i in range(5):
+        pull = choices(range(1, 52), ranks)
+        ran_pull = db.execute('SELECT * FROM cards WHERE card_id = ?', pull)
+        card = ran_pull.fetchone()
+        for row in card:
+            print(row)
+        print('\n')
+
+    #db.commit()
+
+with app.app_context():
+    pull_cards()
