@@ -76,7 +76,7 @@ def connect_with_friends():
     return render_template('friends.html')
 
 
-@app.route('/new_user_info', methods=['POST'])
+@app.route('/new_user_info', methods=['GET'])
 def new_user_info():
     return render_template('create_user.html')
 
@@ -85,9 +85,20 @@ def new_user_info():
 def create_user():
     db = get_db()
     chosen_username = request.form['choose_username']
+    user_exists = db.execute("SELECT password FROM users WHERE username=?", [chosen_username])
+    user_exists_check = user_exists.fetchone()
+    if user_exists_check:
+        flash('username already taken')
+        return redirect(url_for('new_user_info'))
+
     hashed_pw = werkzeug.security.generate_password_hash(request.form['choose_password'], method='pbkdf2:sha256',
                                                          salt_length=16)
     chosen_email = request.form['choose_email']
+    email_exists = db.execute("SELECT password FROM users WHERE email=?", [chosen_email])
+    email_exists_check = email_exists.fetchone()
+    if email_exists_check:
+        flash('email already taken')
+        return redirect(url_for('new_user_info'))
     db.execute('insert into users (username, password, email) values (?, ?, ?)',
                [chosen_username, hashed_pw, chosen_email])
     db.commit()
@@ -103,10 +114,6 @@ def login():
     if pw_check is None:
         flash('invalid username')
         return redirect(url_for('show_entries'))
-    #commented this block out because if the username is invalid, the query will fail
-    #so we dont need to check it explicitly
-    #if request.args['username'] != username:
-    #    error = 'Invalid username'
     if not werkzeug.security.check_password_hash(pw_check['password'], request.form['password']):
         error = 'Invalid password'
         flash('incorrect password')
