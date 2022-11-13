@@ -1,7 +1,15 @@
 {% extends "layout.html" %}
 {% block body %}
 
-<h1>Card Inventory</h1>
+<!----Filter user cards by rarity--->
+<h1>Card Filter</h1>
+    <h2>Filter user owned cards by rarity!</h2>
+    <ul class="cards">
+        <li><a href="?">[all]</a></li>
+        {% for card in cards %}
+            <li><a href="?rarity={{ card.rarity }}">{{ card.rarity }}</a></li>
+        {% endfor %}
+    </ul>
 
 <!----We will need to loop through the cards in the user collection,
 the same way we looped through entries to our flaskr website:
@@ -12,7 +20,7 @@ this code is going to be inside the loop--->
   {% for card in collection %}
     <li>
         <h3>{{ card.name }}</h3>
-        <i>[{{ card.rareity }}]</i>
+        <i>[{{ card.rarity }}]</i>
         <p>{{ card.description }}</p>
     </li>
   {% else %}
@@ -20,6 +28,7 @@ this code is going to be inside the loop--->
   {% endfor %}
   </ul>
 
+<!----Merge this code into for loop down the road...--->
 <div class="container text-center">
   <div class="row">
     <div class="col">
