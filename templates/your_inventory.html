@@ -1,11 +1,24 @@
 {% extends "layout.html" %}
 {% block body %}
 
-<h1>My Card Collection</h1>
+<h1>Card Inventory</h1>
 
 <!----We will need to loop through the cards in the user collection,
 the same way we looped through entries to our flaskr website:
 this code is going to be inside the loop--->
+
+<h2>My Card Collection</h2>
+  <ul class="collection">
+  {% for card in collection %}
+    <li>
+        <h3>{{ card.name }}</h3>
+        <i>[{{ card.rareity }}]</i>
+        <p>{{ card.description }}</p>
+    </li>
+  {% else %}
+    <em>No cards in your collection!</em>
+  {% endfor %}
+  </ul>
 
 <div class="container text-center">
   <div class="row">
