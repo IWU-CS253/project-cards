@@ -1,25 +1,26 @@
 {% extends "layout.html" %}
 {% block body %}
 
-<!----Code to filter through--->
-<h1>Cards</h1>
-  <ul class="cards">
-    <li><a href="?">[all]</a></li>
-  {% for card in cards %}
-    <li><a href="?card={{ card.card }}">{{ card.card }}</a></li>
-  {% endfor %}
-  </ul>
+<!----Filter friends cards by rarity--->
+<h1>Friend Inventory</h1>
+    <h2>Filter friends cards by rarity!</h2>
+    <ul class="cards">
+        <li><a href="?">[all]</a></li>
+        {% for card in cards %}
+            <li><a href="?rarity={{ card.rarity }}">{{ card.rarity }}</a></li>
+        {% endfor %}
+    </ul>
 
 <!----We will need to loop through the cards in the user collection,
 the same way we looped through entries to our flaskr website:
 this code is going to be inside the loop--->
 
-<h2>My Card Collection</h2>
+<h2>Friend Card Collection</h2>
   <ul class="collection">
   {% for card in collection %}
     <li>
         <h3>{{ card.name }}</h3>
-        <i>[{{ card.rareity }}]</i>
+        <i>[{{ card.rarity }}]</i>
         <p>{{ card.description }}</p>
     </li>
   {% else %}
@@ -97,7 +98,7 @@ this code is going to be inside the loop--->
     </div>
 
     <div class="container text-center">
-          <a class="btn btn-primary btn-lg" href="{{ url_for('friends') }}" role="button">Home</a>
+          <a class="btn btn-primary btn-lg" href="{{ url_for('connect_with_friends') }}" role="button">Home</a>
     </div>
 
 {% endblock %}
