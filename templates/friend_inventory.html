@@ -1,9 +1,9 @@
 {% extends "layout.html" %}
 {% block body %}
 
-<!----Filter user cards by rarity--->
-<h1>Card Filter</h1>
-    <h2>Filter user owned cards by rarity!</h2>
+<!----Filter friends cards by rarity--->
+<h1>Friend Inventory</h1>
+    <h2>Filter friends cards by rarity!</h2>
     <ul class="cards">
         <li><a href="?">[all]</a></li>
         {% for card in cards %}
@@ -15,7 +15,7 @@
 the same way we looped through entries to our flaskr website:
 this code is going to be inside the loop--->
 
-<h2>My Card Collection</h2>
+<h2>Friend Card Collection</h2>
   <ul class="collection">
   {% for card in collection %}
     <li>
@@ -28,7 +28,6 @@ this code is going to be inside the loop--->
   {% endfor %}
   </ul>
 
-<!----Merge this code into for loop down the road...--->
 <div class="container text-center">
   <div class="row">
     <div class="col">
@@ -99,7 +98,7 @@ this code is going to be inside the loop--->
     </div>
 
     <div class="container text-center">
-          <a class="btn btn-primary btn-lg" href="{{ url_for('home') }}" role="button">Home</a>
+          <a class="btn btn-primary btn-lg" href="{{ url_for('connect_with_friends') }}" role="button">Home</a>
     </div>
 
 {% endblock %}
