@@ -58,7 +58,19 @@ def show_entries():
 
 @app.route('/your_inventory')
 def your_inventory():
-    return render_template('your_inventory.html')
+    db = get_db()
+
+    if "rank" in request.args:
+        cur = db.execute('SELECT card_id, name, rank FROM collection WHERE rank = ? ORDER BY card_id',
+                         [request.args["rank"]])
+    else:
+        cur = db.execute('SELECT card_id, name, rank FROM collection ORDER BY card_id')
+
+    collection = cur.fetchall()
+    cur = db.execute('SELECT DISTINCT rank FROM collection ORDER BY card_id')
+    ranks = cur.fetchall()
+
+    return render_template('your_inventory.html', collection=collection, ranks=ranks)
 
 
 @app.route('/marketplace')

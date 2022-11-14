@@ -1,11 +1,23 @@
 {% extends "layout.html" %}
 {% block body %}
-    {% for card in collection %}
-            <ul>
-                <input type="hidden" name="id" value = "{{ card.card_id }}" class="card-id">
-                <a>{{ card.name }}</a>
-                <a>{{ card.rank }}</a>
-            </ul>
+    <ul>
+    <form action="{{ url_for('your_inventory') }}" method="post" class="your-inventory">
+        <a class="btn btn-outline-secondary" href="?">All Cards</a>
+    </form>
+    {% for card in ranks %}
+        <a class="btn btn-outline-secondary" href="?rank={{ card.rank }}">{{ card.rank }}</a>
     {% endfor %}
-
+    </ul>
+    {% for card in collection %}
+            <div class="column container border border-secondary border-dark rounded">
+                <input type="hidden" name="id" value = "{{ card.card_id }}" class="{{ card.rank }}">
+                <div class="row">
+                    <a>{{ card.name }}</a>
+                </div>
+                    <a>{{ card.rank }}</a>
+                <div class="row">
+                    <a>Some Flavor Text Woohoo</a>
+                </div>
+            </div>
+    {% endfor %}
 {% endblock %}
