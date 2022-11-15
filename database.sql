@@ -14,8 +14,10 @@ CREATE TABLE cards (
 -- ownership table, card and user attribute as foreign keys
 drop table if exists collection;
 CREATE TABLE collection (
-    card_id FOREIGN KEY REFERENCES cards,
-    user_id FOREIGN KEY REFERENCES users
+    card_id int,
+    user_id int,
+    FOREIGN KEY (card_id) REFERENCES cards,
+    FOREIGN KEY (user_id) REFERENCES users
 );
 
 
@@ -34,4 +36,12 @@ CREATE TABLE users (
     username TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL
+);
+
+drop table if exists friends;
+CREATE TABLE friends (
+    user1_id int,
+    user2_id int,
+    FOREIGN KEY (user1_id) REFERENCES users,
+    FOREIGN KEY (user2_id) REFERENCES users
 );
