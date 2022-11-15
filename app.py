@@ -82,6 +82,10 @@ def marketplace():
 def connect_with_friends():
     return render_template('friends.html')
 
+@app.route('/trade_page')
+def trade_page():
+    return render_template('trade_page.html')
+
 
 @app.route('/new_user_info', methods=['POST'])
 def new_user_info():
