@@ -2,7 +2,6 @@ import os
 from sqlite3 import dbapi2 as sqlite3
 from flask import Flask, request, g, redirect, url_for, render_template, flash, session
 import werkzeug
-from random import choices
 
 app = Flask(__name__)
 
@@ -52,11 +51,6 @@ def close_db(error):
         g.sqlite_db.close()
 
 
-@app.route('/home')
-def home():
-    return render_template('home.html')
-
-
 @app.route('/')
 def show_entries():
     return render_template('login.html')
@@ -64,7 +58,19 @@ def show_entries():
 
 @app.route('/your_inventory')
 def your_inventory():
-    return render_template('your_inventory.html')
+    db = get_db()
+
+    if "rank" in request.args:
+        cur = db.execute('SELECT card_id, name, rank FROM collection WHERE rank = ? ORDER BY card_id',
+                         [request.args["rank"]])
+    else:
+        cur = db.execute('SELECT card_id, name, rank FROM collection ORDER BY card_id')
+
+    collection = cur.fetchall()
+    cur = db.execute('SELECT DISTINCT rank FROM collection ORDER BY card_id')
+    ranks = cur.fetchall()
+
+    return render_template('your_inventory.html', collection=collection, ranks=ranks)
 
 
 @app.route('/marketplace')
@@ -76,13 +82,12 @@ def marketplace():
 def connect_with_friends():
     return render_template('friends.html')
 
+@app.route('/trade_page')
+def trade_page():
+    return render_template('trade_page.html')
 
-@app.route('/friend_inventory')
-def friend_inventory():
-    return render_template('friend_inventory.html')
 
-
-@app.route('/new_user_info', methods=['GET'])
+@app.route('/new_user_info', methods=['POST'])
 def new_user_info():
     return render_template('create_user.html')
 
@@ -91,70 +96,37 @@ def new_user_info():
 def create_user():
     db = get_db()
     chosen_username = request.form['choose_username']
-    user_exists = db.execute("SELECT password FROM users WHERE username=?", [chosen_username])
-    user_exists_check = user_exists.fetchone()
-    if user_exists_check:
-        flash('username already taken')
-        return redirect(url_for('new_user_info'))
-
     hashed_pw = werkzeug.security.generate_password_hash(request.form['choose_password'], method='pbkdf2:sha256',
                                                          salt_length=16)
     chosen_email = request.form['choose_email']
-    email_exists = db.execute("SELECT password FROM users WHERE email=?", [chosen_email])
-    email_exists_check = email_exists.fetchone()
-    if email_exists_check:
-        flash('email already taken')
-        return redirect(url_for('new_user_info'))
     db.execute('insert into users (username, password, email) values (?, ?, ?)',
                [chosen_username, hashed_pw, chosen_email])
     db.commit()
     return render_template('login.html')
 
 
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
     db = get_db()
-    pswd = db.execute("SELECT password FROM users WHERE username=?", [request.form['username']])
-    pw_check = pswd.fetchone()
-    if pw_check is None:
-        flash('invalid username')
-        return redirect(url_for('show_entries'))
-    if not werkzeug.security.check_password_hash(pw_check['password'], request.form['password']):
+    pswd = db.execute("SELECT password FROM users WHERE username=?", [request.args['username']])
+    pw_check = pswd.fetchall()
+    #commented this block out because if the username is invalid, the query will fail
+    #so we dont need to check it explicitly
+    #if request.args['username'] != username:
+    #    error = 'Invalid username'
+    if not werkzeug.security.check_password_hash(pw_check, request.args['password']):
         error = 'Invalid password'
-        flash('incorrect password')
-        return redirect(url_for('show_entries'))
     else:
         session['logged_in'] = True
         flash('You were logged in')
-        return redirect(url_for('home'))
-    return redirect(url_for('home'))
+        return redirect(url_for('show_entries'))
+    return render_template('home.html', error=error)
 
 
-#@app.route('/logout')
-#def logout():
+ #@app.route('/logout')
+ #def logout():
 #   session.pop('logged_in', None)
 #   flash('You were logged out')
-#   return redirect(url_for('login'))
+#   return redirect(url_foadd r('login'))
      
-
-def pull_cards():
-    """Adds 5 cards to collections table from the total cards table using rank
-            to determine the probability of pulling each card"""
-    db = get_db()
-
-    # create a list of weights for use in random's choice method
-    card_weight = db.execute('SELECT rank FROM cards')
-    ranks = card_weight.fetchall()
-    ranks = [rank[0] for rank in ranks]
-
-    # pull 5 cards from the cards table and inserts the card to the collection table
-    for i in range(5):
-        pull = choices(range(1, 52), ranks)
-        ran_pull = db.execute('SELECT * FROM cards WHERE card_id = ?', pull)
-        card = ran_pull.fetchone()
-
-        db.execute('INSERT INTO collection VALUES (?, ?, ?)', card)
-        db.commit()
-
-

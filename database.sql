@@ -1,4 +1,3 @@
-
 -- total cards in application table
 drop table if exists cards;
 CREATE TABLE cards (
@@ -9,6 +8,8 @@ CREATE TABLE cards (
     rank INT
 );
 
+-- pack of 51 cards with a food theme
+.import 'FOOD_PACK.csv' cards --csv
 
 -- user's collection of cards table
 -- ownership table, card and user attribute as foreign keys

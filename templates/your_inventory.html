@@ -1,105 +1,25 @@
 {% extends "layout.html" %}
 {% block body %}
-
-<!----Filter user cards by rarity--->
-<h1>Card Filter</h1>
-    <h2>Filter user owned cards by rarity!</h2>
-    <ul class="cards">
-        <li><a href="?">[all]</a></li>
-        {% for card in cards %}
-            <li><a href="?rarity={{ card.rarity }}">{{ card.rarity }}</a></li>
-        {% endfor %}
+    <ul>
+    <form action="{{ url_for('your_inventory') }}" method="post" class="your-inventory">
+        <a class="btn btn-outline-secondary" href="?">All Cards</a>
+    </form>
+    {% for card in ranks %}
+        <a class="btn btn-outline-secondary" href="?rank={{ card.rank }}">{{ card.rank }}</a>
+    {% endfor %}
     </ul>
-
-<!----We will need to loop through the cards in the user collection,
-the same way we looped through entries to our flaskr website:
-this code is going to be inside the loop--->
-
-<h2>My Card Collection</h2>
-  <ul class="collection">
-  {% for card in collection %}
-    <li>
-        <h3>{{ card.name }}</h3>
-        <i>[{{ card.rarity }}]</i>
-        <p>{{ card.description }}</p>
-    </li>
-  {% else %}
-    <em>No cards in your collection!</em>
-  {% endfor %}
-  </ul>
-
-<!----Merge this code into for loop down the road...--->
-<div class="container text-center">
-  <div class="row">
-    <div class="col">
-        <div class="card" style="width: 18rem;">
-            <img src="..." class="card-img-top" alt="...">
-            <div class="card-body"><h1>Card Name</h1>
-                <div class="card-body"><h2>Card Rarity</h2>
-                    <p class="card-text"><h3>Short card description</h3></p>
+    {% for card in collection %}
+            <div class="column container border border-secondary border-dark rounded">
+                <input type="hidden" name="id" value = "{{ card.card_id }}" class="{{ card.rank }}">
+                <div class="row">
+                    <a>{{ card.name }}</a>
+                </div>
+                <div class="row">
+                    <a>{{ card.rank }}</a>
+                </div>
+                <div class="row">
+                    <a>Some Flavor Text Woohoo</a>
                 </div>
             </div>
-        </div>
-    </div>
-        <div class="col">
-            <div class="card" style="width: 18rem;">
-                <img src="..." class="card-img-top" alt="...">
-                <div class="card-body"><h1>Card Name</h1>
-                    <div class="card-body"><h2>Card Rarity</h2>
-                        <p class="card-text"><h3>Short card description</h3></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="card" style="width: 18rem;">
-                <img src="..." class="card-img-top" alt="...">
-                <div class="card-body"><h1>Card Name</h1>
-                    <div class="card-body"><h2>Card Rarity</h2>
-                        <p class="card-text"><h3>Short card description</h3></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-  </div>
-</div>
-    <div class="container text-center">
-        <div class="row">
-            <div class="col">
-                <div class="card" style="width: 18rem;">
-                    <img src="..." class="card-img-top" alt="...">
-                    <div class="card-body"><h1>Card Name</h1>
-                        <div class="card-body"><h2>Card Rarity</h2>
-                            <p class="card-text"><h3>Short card description</h3></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card" style="width: 18rem;">
-                    <img src="..." class="card-img-top" alt="...">
-                    <div class="card-body"><h1>Card Name</h1>
-                        <div class="card-body"><h2>Card Rarity</h2>
-                            <p class="card-text"><h3>Short card description</h3></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card" style="width: 18rem;">
-                    <img src="..." class="card-img-top" alt="...">
-                    <div class="card-body"><h1>Card Name</h1>
-                        <div class="card-body"><h2>Card Rarity</h2>
-                            <p class="card-text"><h3>Short card description</h3></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="container text-center">
-          <a class="btn btn-primary btn-lg" href="{{ url_for('home') }}" role="button">Home</a>
-    </div>
-
+    {% endfor %}
 {% endblock %}

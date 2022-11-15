@@ -77,7 +77,9 @@ this code is going to be inside the loop--->
     </div>
 
     <div class="container text-center">
-          <a class="btn btn-primary btn-lg" href="{{ url_for('home') }}" role="button">Home</a>
+          <form action="{{ url_for('show_entries') }}" method="post" class="home-button">
+              <button type="button" class="btn btn-primary btn-lg">Home</button>
+          </form>
     </div>
 
 {% endblock %}
