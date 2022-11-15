@@ -39,28 +39,28 @@ this code is going to be inside the loop --->
   <tbody>
     <tr>
       <td>Garrett Swingler</td>
-      <td><a class="btn btn-primary btn-lg" href="{{ url_for('friend_inventory') }}" role="button">Collection</a></td>
+      <td>...</td>
       <td>
-          <form action="{{ url_for('home') }}" method="post" class="trade-button">
-              <button type="button" class="btn btn-primary btn-lg">Trade</button>
+          <form action="{{ url_for('show_entries') }}" method="post" class="trade-button">
+              <button type="button" class="btn btn-primary btn-lg">Send Message</button>
           </form>
       </td>
     </tr>
     <tr>
       <td>Dino Biggers</td>
-      <td><a class="btn btn-primary btn-lg" href="{{ url_for('friend_inventory') }}" role="button">Collection</a></td>
+      <td>...</td>
       <td>
-          <form action="{{ url_for('home') }}" method="post" class="trade-button">
-              <button type="button" class="btn btn-primary btn-lg">Trade</button>
+          <form action="{{ url_for('show_entries') }}" method="post" class="trade-button">
+              <button type="button" class="btn btn-primary btn-lg">Send Message</button>
           </form>
       </td>
     </tr>
     <tr>
       <td>Eric Torres</td>
-      <td><a class="btn btn-primary btn-lg" href="{{ url_for('friend_inventory') }}" role="button">Collection</a></td>
+      <td>...</td>
       <td>
-          <form action="{{ url_for('home') }}" method="post" class="trade-button">
-              <button type="button" class="btn btn-primary btn-lg">Trade</button>
+          <form action="{{ url_for('show_entries') }}" method="post" class="trade-button">
+              <button type="button" class="btn btn-primary btn-lg">Send Message</button>
           </form>
       </td>
     </tr>
@@ -68,7 +68,10 @@ this code is going to be inside the loop --->
 </table>
 
     <div class="container text-center">
-          <a class="btn btn-primary btn-lg" href="{{ url_for('home') }}" role="button">Home</a>
+          <form action="{{ url_for('show_entries') }}" method="post" class="home-button">
+              <button type="button" class="btn btn-primary btn-lg">Home</button>
+          </form>
     </div>
+
 
 {% endblock %}
