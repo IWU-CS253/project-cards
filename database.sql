@@ -11,12 +11,15 @@ CREATE TABLE cards (
 
 
 -- user's collection of cards table
+-- ownership table, card and user attribute as foreign keys
 drop table if exists collection;
 CREATE TABLE collection (
-    card_id INT,
-    name VARCHAR(20),
-    rank INT
+    card_id int,
+    user_id int,
+    FOREIGN KEY (card_id) REFERENCES cards,
+    FOREIGN KEY (user_id) REFERENCES users
 );
+
 
 -- cards to be shown in the store table
 drop table if exists store;
@@ -29,8 +32,16 @@ CREATE TABLE store (
 
 drop table if exists users;
 CREATE TABLE users (
-    numeric_id INT PRIMARY KEY,
+    user_id INT PRIMARY KEY,
     username TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL
+);
+
+drop table if exists friends;
+CREATE TABLE friends (
+    user1_id int,
+    user2_id int,
+    FOREIGN KEY (user1_id) REFERENCES users,
+    FOREIGN KEY (user2_id) REFERENCES users
 );
