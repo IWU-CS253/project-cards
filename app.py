@@ -81,6 +81,11 @@ def connect_with_friends():
 def friend_inventory():
     return render_template('friend_inventory.html')
 
+@app.route('/trade')
+def trade():
+    return render_template('trade.html')
+
+
 
 @app.route('/new_user_info', methods=['GET'])
 def new_user_info():
