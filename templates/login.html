@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
+{% extends "layout.html" %}
+{% block body %}
 <head>
     <meta charset="UTF-8">
     <title>Log In</title>
@@ -14,3 +16,4 @@
 <a href="{{url_for('new_user_info')}}">Create Account</a>
 </body>
 </html>
+{% endblock %}
