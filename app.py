@@ -127,16 +127,16 @@ def login():
     else:
         session['logged_in'] = True
         flash('You were logged in')
-        current_user = db.execute("SELECT user_id FROM users WHERE username=?", [request.form['username']])
+        session['current_user'] = ("SELECT user_id FROM users WHERE username=?", [request.form['username']])
         return redirect(url_for('home'))
     return redirect(url_for('home'))
 
 
-#@app.route('/logout')
-#def logout():
-#   session.pop('logged_in', None)
-#   flash('You were logged out')
-#   return redirect(url_for('login'))
+@app.route('/logout', methods=['GET'])
+def logout():
+    session.pop('logged_in', None)
+    flash('You were logged out')
+    return redirect(url_for('show_entries'))
      
 
 def pull_cards():
@@ -157,5 +157,24 @@ def pull_cards():
 
         db.execute('INSERT INTO collection VALUES (?, ?, ?)', card)
         db.commit()
+
+
+@app.route('/add_friend', methods=['GET', 'POST'])
+def add_friend():
+    db = get_db()
+    added_friend = request.form['friend_request_name']
+    friend_id = db.execute("SELECT user_id FROM users WHERE username=?", [added_friend])
+    friend_check = friend_id.fetchone()
+    if friend_check is None:
+        flash('user does not exist')
+        return redirect(url_for('connect_with_friends'))
+    already_friend = db.execute("SELECT * FROM friends WHERE user1=? AND user2=?", [session['current_user'], friend_id])
+    if already_friend:
+        flash('this action has already been taken')
+        return redirect(url_for('connect_with_friends'))
+
+    flash('added friend, have them add you as well to become friends')
+    db.execute('INSERT INTO friends (user1_id, user2_id)VALUES (?, ?)', [session['current_user'], friend_id])
+
 
 
