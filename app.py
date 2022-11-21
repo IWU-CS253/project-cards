@@ -64,12 +64,24 @@ def show_entries():
 
 @app.route('/your_inventory')
 def your_inventory():
-    return render_template('your_inventory.html')
+    db = get_db()
+
+    cur = db.execute('SELECT DISTINCT rank FROM collection ORDER BY rank')
+    cards = cur.fetchall()
+    cur = db.execute('SELECT * FROM collection ORDER BY rank')
+    collection = cur.fetchall()
+
+    return render_template('your_inventory.html', cards=cards, collection=collection)
 
 
 @app.route('/marketplace')
 def marketplace():
-    return render_template('marketplace.html')
+    db = get_db()
+
+    cur = db.execute('SELECT * FROM cards')
+    cards = cur.fetchall()
+
+    return render_template('marketplace.html', cards=cards)
 
 
 @app.route('/connect_with_friends')
@@ -159,6 +171,7 @@ def pull_cards():
         db.commit()
 
 
+
 @app.route('/add_friend', methods=['GET', 'POST'])
 def add_friend():
     db = get_db()
@@ -177,4 +190,14 @@ def add_friend():
     db.execute('INSERT INTO friends (user1_id, user2_id)VALUES (?, ?)', [session['current_user'], friend_id])
 
 
+
+
+@app.route('/add_cards', methods=['POST'])
+def add_cards():
+    db = get_db()
+
+    db.execute('INSERT INTO collection SELECT * FROM cards WHERE card_id=?', [request.form["id"]])
+    db.commit()
+
+    return redirect(url_for('marketplace'))
 
