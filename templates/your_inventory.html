@@ -3,11 +3,11 @@
 
 <!----Filter user cards by rarity--->
 <h1>Card Filter</h1>
-    <h2>Filter user owned cards by rarity!</h2>
+    <h2>Filter cards by rarity!</h2>
     <ul class="cards">
         <li><a href="?">[all]</a></li>
         {% for card in cards %}
-            <li><a href="?rarity={{ card.rarity }}">{{ card.rarity }}</a></li>
+            <li><a href="?rank={{ card.rank }}">{{ card.rank }}</a></li>
         {% endfor %}
     </ul>
 
@@ -20,8 +20,8 @@ this code is going to be inside the loop--->
   {% for card in collection %}
     <li>
         <h3>{{ card.name }}</h3>
-        <i>[{{ card.rarity }}]</i>
-        <p>{{ card.description }}</p>
+        <i>[{{ card.rank }}]</i>
+        <p>Flavor Text! Woohoo!</p>
     </li>
   {% else %}
     <em>No cards in your collection!</em>
