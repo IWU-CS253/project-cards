@@ -162,7 +162,7 @@ def pull_cards():
 @app.route('/add_friend', methods=['GET', 'POST'])
 def add_friend():
     db = get_db()
-    added_friend = request.form['friend_request_name']
+    added_friend = request.form['new_friend']
     friend_id = db.execute("SELECT user_id FROM users WHERE username=?", [added_friend])
     friend_check = friend_id.fetchone()
     if friend_check is None:
