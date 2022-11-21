@@ -12,8 +12,16 @@ this code is going to be inside the loop --->
             <div class="col">
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="basic-addon1">@</span>
-                    <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
-                    <button class="btn btn-outline-secondary" type="button" id="button-addon2">Search</button>
+
+                    <form action="{{ url_for('add_friend') }}" method="post">
+                        <input name="new_friend" type="text" placeholder="Username">
+                        <input type="submit" value="Submit">
+                    </form>
+                    <!-- Commented out more stylized code to get basic functionality down, just for now
+                    <input type="text" class="form-control" placeholder="Username" aria-label="new_friend" aria-describedby="basic-addon1">
+                    <form type="submit" href="{{ url_for('add_friend') }}"class="btn btn-outline-secondary" id="button-addon2">Search</form>
+                    <a type="submit" class="btn btn-primary btn-lg" href="{{ url_for('add_friend') }}" role="button">add</a>
+                    -->
                 </div>
             </div>
         </div>
