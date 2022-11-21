@@ -139,6 +139,7 @@ def login():
     else:
         session['logged_in'] = True
         flash('You were logged in')
+        current_user = db.execute("SELECT user_id FROM users WHERE username=?", [request.form['username']])
         return redirect(url_for('home'))
     return redirect(url_for('home'))
 
