@@ -85,7 +85,13 @@ def friend_inventory():
 def trade():
     return render_template('trade.html')
 
+@app.route('/trade_request')
+def trade_request():
+    return render_template('trade_request.html')
 
+@app.route('/trade_result')
+def trade_result():
+    return render_template('trade_result.html')
 
 @app.route('/new_user_info', methods=['GET'])
 def new_user_info():

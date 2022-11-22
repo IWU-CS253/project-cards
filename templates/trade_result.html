@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<body>
+    <h1>Your trade has been completed!</h1>
+
+<p>You offered!</p>
+    <div class="container text-center">
+  <div class="row">
+    <div class="col">
+        <div class="card" style="width: 18rem;">
+            <img src="..." class="card-img-top" alt="...">
+            <div class="card-body"><h1>Card Name</h1>
+                <div class="card-body"><h2>Card Rarity</h2>
+                    <p class="card-text"><h3>Short card description</h3></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<p>You recieved!</p>
+
+      <div class="container text-center">
+  <div class="row">
+    <div class="col">
+        <div class="card" style="width: 18rem;">
+            <img src="..." class="card-img-top" alt="...">
+            <div class="card-body"><h1>Card Name</h1>
+                <div class="card-body"><h2>Card Rarity</h2>
+                    <p class="card-text"><h3>Short card description</h3></p>
+                </div>
+            </div>
+        </div>
+    </div>
+      <button></button>
+      <div class="container text-center">
+          <a class="btn btn-primary btn-lg" href="{{ url_for('home') }}" role="button">Home</a>
+    </div>
+      <div class="container text-center">
+          <a class="btn btn-primary btn-lg" href="{{ url_for('trade_request') }}" role="button">Make another trade</a>
+    </div>
+</body>
+
+
+
+
+{% endblock %}
