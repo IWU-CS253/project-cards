@@ -98,8 +98,10 @@ def friend_inventory():
 def wallet_balance():
     db = get_db()
     balance = request.form['wallet_balance']
-    wallet_exists = db.execute("SELECT username FROM users WHERE wallet_balance=?", [balance])
-    wallet_exists_check = wallet_exists.fetchone()
+    user_wallet = db.execute("SELECT wallet_balance FROM users WHERE username=?", [balance])
+    user_wallet_check = user_wallet.fetchone()
+    if user_wallet_check:
+        return render_template('home.html', user_wallet=user_wallet)
 
 
 @app.route('/new_user_info', methods=['GET'])
@@ -179,7 +181,6 @@ def pull_cards():
         db.commit()
 
 
-
 @app.route('/add_friend', methods=['GET', 'POST'])
 def add_friend():
     db = get_db()
@@ -196,8 +197,6 @@ def add_friend():
 
     flash('added friend, have them add you as well to become friends')
     db.execute('INSERT INTO friends (user1_id, user2_id)VALUES (?, ?)', [session['current_user'], friend_id])
-
-
 
 
 @app.route('/add_cards', methods=['POST'])

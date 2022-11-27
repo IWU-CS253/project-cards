@@ -3,7 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
-    <h1>{{ url_for('wallet_balance') }}</h1>
+    <h3>Wallet Balance</h3>
+    <ul class="wallet_balance">
+        {% for balance in wallet_balance %}
+            <div class="container text-center">
+                <div class="row">
+                    <div class="col">
+                        <h4>{{ balance.wallet_balance }}</h4>
+                    </div>
+                </div>
+            </div>
+            </ul>
+        {% endfor %}
 </head>
 <body>
 <div class="container text-center">
