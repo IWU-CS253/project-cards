@@ -201,28 +201,28 @@ def add_cards():
     return redirect(url_for('marketplace'))
 
 
-@app.route('/purchase', method=['POST'])
+@app.route('/purchase', methods=['GET'])
 def purchase(amount):
     # use this method every time there is a purchase(pack or card) it will limit duplication of code in our application.
     # decreases the wallet of the logged-in user by the amount of the purchase, which is passed in as argument
     db = get_db()
-    user_wallet = ('SELECT wallet_balance FROM users WHERE username=?', [session['current_user']])
-    # this next line is weird, user wallet is being stored the wrong way
-    user_wallet = user_wallet[2].fetchone()[4]
+    user_wallet = db.execute('SELECT wallet_balance FROM users WHERE username=?', [session['current_user']])
+    user_wallet = user_wallet.fetchone().wallet_balance
     new_balance = user_wallet-amount
     db.execute("UPDATE users SET wallet_balance=? WHERE username=?", [new_balance, session['current_user']])
+    db.commit()
 
 
-@app.route('/buy_cards', method=['POST'])
+@app.route('/buy_cards', methods=['GET'])
 def buy_card(card_id):
     # This function is used when purchasing an individual card: takes the id of the desired card as argument
     # and calls the purchase method with the card price to adjust the user wallet
     # Also inserts the card with corresponding id into the collection table
     db = get_db()
     user_id = db.execute("SELECT user_id FROM users WHERE username=?", [session['current_user']])
-    user_id = user_id.fetchone()[0]
+    user_id = user_id.fetchone().user_id
     card_price = db.execute("SELECT price FROM store WHERE card_id=?", [card_id])
-    card_price = card_price.fetchone()[3]
+    card_price = card_price.fetchone().card_price
     purchase(card_price)
     db.execute('INSERT INTO collection SELECT * FROM cards WHERE card_id=?', [card_id])
     db.execute('INSERT INTO transactions (user_id, card_id, wallet_change) VALUES (?, ?, ?)',
