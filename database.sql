@@ -35,7 +35,8 @@ CREATE TABLE users (
     user_id INT PRIMARY KEY,
     username TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
-    email TEXT UNIQUE NOT NULL
+    email TEXT UNIQUE NOT NULL,
+    wallet_balance INT DEFAULT 500
 );
 
 drop table if exists friends;
