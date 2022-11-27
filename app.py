@@ -7,7 +7,8 @@ from random import choices
 app = Flask(__name__)
 
 app.config.update(dict(
-    DATABASE=os.path.join(app.root_path, 'flaskr.db'),
+    #might have to change this back to flaskr instead of projectcards
+    DATABASE=os.path.join(app.root_path, 'projectcards.db'),
     DEBUG=True,
     SECRET_KEY='development key',
 ))
@@ -176,17 +177,18 @@ def add_friend():
     db = get_db()
     added_friend = request.form['new_friend']
     friend_id = db.execute("SELECT user_id FROM users WHERE username=?", [added_friend])
+    user_id = db.execute("SELECT user_id FROM users WHERE username=?", [session['current_user']])
     friend_check = friend_id.fetchone()
     if friend_check is None:
         flash('user does not exist')
         return redirect(url_for('connect_with_friends'))
-    already_friend = db.execute("SELECT * FROM friends WHERE user1=? AND user2=?", [session['current_user'], friend_id])
+    already_friend = db.execute("SELECT * FROM friends WHERE user1=? AND user2=?", [user_id, friend_id])
     if already_friend:
         flash('this action has already been taken')
         return redirect(url_for('connect_with_friends'))
 
     flash('added friend, have them add you as well to become friends')
-    db.execute('INSERT INTO friends (user1_id, user2_id)VALUES (?, ?)', [session['current_user'], friend_id])
+    db.execute('INSERT INTO friends (user1_id, user2_id)VALUES (?, ?)', [user_id, friend_id])
 
 
 @app.route('/add_cards', methods=['POST'])
@@ -198,3 +200,32 @@ def add_cards():
 
     return redirect(url_for('marketplace'))
 
+
+@app.route('/purchase', method=['POST'])
+def purchase(amount):
+    # use this method every time there is a purchase(pack or card) it will limit duplication of code in our application.
+    # decreases the wallet of the logged-in user by the amount of the purchase, which is passed in as argument
+    db = get_db()
+    user_wallet = ('SELECT wallet_balance FROM users WHERE username=?', [session['current_user']])
+    # this next line is weird, user wallet is being stored the wrong way
+    user_wallet = user_wallet[2].fetchone()[4]
+    new_balance = user_wallet-amount
+    db.execute("UPDATE users SET wallet_balance=? WHERE username=?", [new_balance, session['current_user']])
+
+
+@app.route('/buy_cards', method=['POST'])
+def buy_card(card_id):
+    # This function is used when purchasing an individual card: takes the id of the desired card as argument
+    # and calls the purchase method with the card price to adjust the user wallet
+    # Also inserts the card with corresponding id into the collection table
+    db = get_db()
+    user_id = db.execute("SELECT user_id FROM users WHERE username=?", [session['current_user']])
+    user_id = user_id.fetchone()[0]
+    card_price = db.execute("SELECT price FROM store WHERE card_id=?", [card_id])
+    card_price = card_price.fetchone()[3]
+    purchase(card_price)
+    db.execute('INSERT INTO collection SELECT * FROM cards WHERE card_id=?', [card_id])
+    db.execute('INSERT INTO transactions (user_id, card_id, wallet_change) VALUES (?, ?, ?)',
+               [user_id, card_id, card_price])
+    flash('Successfully purchased a card')
+    db.commit()
