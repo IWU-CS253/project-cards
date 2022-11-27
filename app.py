@@ -94,6 +94,14 @@ def friend_inventory():
     return render_template('friend_inventory.html')
 
 
+@app.route('/wallet_balance', methods=['POST'])
+def wallet_balance():
+    db = get_db()
+    balance = request.form['wallet_balance']
+    wallet_exists = db.execute("SELECT username FROM users WHERE wallet_balance=?", [balance])
+    wallet_exists_check = wallet_exists.fetchone()
+
+
 @app.route('/new_user_info', methods=['GET'])
 def new_user_info():
     return render_template('create_user.html')
