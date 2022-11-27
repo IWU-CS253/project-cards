@@ -66,9 +66,9 @@ def show_entries():
 def your_inventory():
     db = get_db()
 
-    cur = db.execute('SELECT DISTINCT rank FROM collection ORDER BY rank')
+    cur = db.execute('SELECT DISTINCT rank FROM cards ORDER BY rank')
     cards = cur.fetchall()
-    cur = db.execute('SELECT * FROM collection ORDER BY rank')
+    cur = db.execute('SELECT * FROM collection ORDER BY card_id')
     collection = cur.fetchall()
 
     return render_template('your_inventory.html', cards=cards, collection=collection)
@@ -144,7 +144,7 @@ def login():
     return redirect(url_for('home'))
 
 
-@app.route('/logout', methods=['GET'])
+@app.route('/logout', methods=['POST'])
 def logout():
     session.pop('logged_in', None)
     flash('You were logged out')
@@ -171,7 +171,6 @@ def pull_cards():
         db.commit()
 
 
-
 @app.route('/add_friend', methods=['GET', 'POST'])
 def add_friend():
     db = get_db()
@@ -188,8 +187,6 @@ def add_friend():
 
     flash('added friend, have them add you as well to become friends')
     db.execute('INSERT INTO friends (user1_id, user2_id)VALUES (?, ?)', [session['current_user'], friend_id])
-
-
 
 
 @app.route('/add_cards', methods=['POST'])
