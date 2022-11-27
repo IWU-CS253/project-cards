@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
-    <h1>Wallet Balance</h1>
+    <h1>{{ url_for('wallet_balance') }}</h1>
 </head>
 <body>
 <div class="container text-center">
@@ -27,6 +27,6 @@
         </div>
     </div>
     <div class="container text-center">
-          <a class="btn btn-primary btn-lg" href="{{ url_for('logout') }}" role="button">logout</a>
+          <a class="btn btn-primary btn-lg" href="{{ url_for('logout') }}" role="button">Log Out</a>
     </div>
 {% endblock %}
