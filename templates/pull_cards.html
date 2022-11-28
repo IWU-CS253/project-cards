@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block body %}
+<head>
+    <meta charset="UTF-8">
+    <title>Your Cards!</title>
+</head>
+<body>
+    {% for card in cards %}
+        <img src="{{ card }}">
+    {% endfor %}
+</body>
+
+{% endblock %}
+</html>
