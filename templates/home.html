@@ -4,24 +4,14 @@
     <meta charset="UTF-8">
     <title>Home</title>
     <h3>Wallet Balance</h3>
-    <ul class="wallet_balance">
-        {% for balance in wallet_balance %}
-            <div class="container text-center">
-                <div class="row">
-                    <div class="col">
-                        <h4>{{ balance.wallet_balance }}</h4>
-                    </div>
-                </div>
-            </div>
-            </ul>
-        {% endfor %}
+    <h4>{{ wallet_balance }}</h4>
 </head>
 <body>
 <div class="container text-center">
         <div class="row">
             <div class="col">
                 <a href="{{ url_for('your_inventory') }}">Inventory</a>
-                <p> Admire your own collection and see which cards you want next!</p>
+                <p>Admire your own collection and see which cards you want next!</p>
             </div>
             <div class="col">
                 <a href="{{ url_for('marketplace') }}">Marketplace</a>

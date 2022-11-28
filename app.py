@@ -101,7 +101,7 @@ def wallet_balance():
     user_wallet = db.execute("SELECT wallet_balance FROM users WHERE username=?", [balance])
     user_wallet_check = user_wallet.fetchone()
     if user_wallet_check:
-        return render_template('home.html', user_wallet=user_wallet)
+        return render_template('home.html', user_wallet=user_wallet_check)
 
 
 @app.route('/new_user_info', methods=['GET'])
