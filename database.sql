@@ -1,4 +1,3 @@
-
 -- total cards in application table
 drop table if exists cards;
 CREATE TABLE cards (

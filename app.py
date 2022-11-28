@@ -55,7 +55,12 @@ def close_db(error):
 
 @app.route('/home')
 def home():
-    return render_template('home.html')
+    db = get_db()
+
+    cur = db.execute('SELECT wallet_balance FROM users WHERE user_id=?', [session['current_user']])
+    user = cur.fetchone()
+
+    return render_template('home.html', user=user)
 
 
 @app.route('/')
@@ -106,6 +111,16 @@ def trade_request():
 def trade_result():
     return render_template('trade_result.html')
 
+@app.route('/wallet_balance', methods=['POST'])
+def wallet_balance():
+    db = get_db()
+    balance = request.form['wallet_balance']
+    user_wallet = db.execute("SELECT wallet_balance FROM users WHERE username=?", [balance])
+    user_wallet_check = user_wallet.fetchone()
+    if user_wallet_check:
+        return render_template('home.html', user_wallet=user_wallet_check)
+
+
 @app.route('/new_user_info', methods=['GET'])
 def new_user_info():
     return render_template('create_user.html')
@@ -129,7 +144,7 @@ def create_user():
     if email_exists_check:
         flash('email already taken')
         return redirect(url_for('new_user_info'))
-    db.execute('insert into users (username, password, email) values (?, ?, ?)',
+    db.execute('insert into users (username, password, email, wallet_baLance) values (?, ?, ?, 500)',
                [chosen_username, hashed_pw, chosen_email])
     db.commit()
     return render_template('login.html')
@@ -196,7 +211,6 @@ def pull_cards():
 
     return render_template('pull_cards.html', cards=cards_img)
 
-
 @app.route('/add_friend', methods=['GET', 'POST'])
 def add_friend():
     db = get_db()
@@ -213,43 +227,8 @@ def add_friend():
 
     flash('added friend, have them add you as well to become friends')
     db.execute('INSERT INTO friends (user1_id, user2_id)VALUES (?, ?)', [session['current_user'], friend_id])
-
-
-@app.route('/add_cards', methods=['POST'])
-def add_cards():
-    db = get_db()
-    db.execute('INSERT INTO collection VALUES(?,?)', [request.form['id'], session['current_user']])
-    db.commit()
-
-    return redirect(url_for('marketplace'))
-
-
-#@app.route('/pack_contents')
-#def pack_contents():
-    #cards = pull_cards()
-
-    #return render_template('pack_contents.html', cards=cards)
-    
-    
-@app.route('/add_friend', methods=['GET', 'POST'])
-def add_friend():
-    db = get_db()
-    added_friend = request.form['new_friend']
-    friend_id = db.execute("SELECT user_id FROM users WHERE username=?", [added_friend])
-    user_id = db.execute("SELECT user_id FROM users WHERE username=?", [session['current_user']])
-    friend_check = friend_id.fetchone()
-    if friend_check is None:
-        flash('user does not exist')
-        return redirect(url_for('connect_with_friends'))
-    already_friend = db.execute("SELECT * FROM friends WHERE user1=? AND user2=?", [user_id, friend_id])
-    if already_friend:
-        flash('this action has already been taken')
-        return redirect(url_for('connect_with_friends'))
-
-    flash('added friend, have them add you as well to become friends')
-    db.execute('INSERT INTO friends (user1_id, user2_id)VALUES (?, ?)', [user_id, friend_id])
-
-
+  
+  
 @app.route('/add_cards', methods=['POST'])
 def add_cards():
     db = get_db()
