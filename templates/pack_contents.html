@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<div class="container-fluid">
+  {% for card in cards %}
+    <div class="container-fluid">
+      <a>{{card.name}}</a>
+      <a>{{card.rank}}</a>
+      <a>Flavor Text! Woohoo!</a>
+    </div>
+  {% endfor %}
+</div>
+
+<div class="container text-center">
+      <a class="btn btn-primary btn-lg" href="{{ url_for('marketplace') }}" role="button">Marketplace</a>
+</div>
+<div class="container text-center">
+      <a class="btn btn-primary btn-lg" href="{{ url_for('home') }}" role="button">Home</a>
+</div>
+{% endblock %}

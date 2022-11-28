@@ -33,7 +33,7 @@ CREATE TABLE store (
 
 drop table if exists users;
 CREATE TABLE users (
-    user_id INT PRIMARY KEY,
+    user_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     username TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
