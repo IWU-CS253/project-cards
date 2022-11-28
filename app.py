@@ -67,9 +67,10 @@ def show_entries():
 def your_inventory():
     db = get_db()
 
-    cur = db.execute('SELECT DISTINCT rank FROM cards ORDER BY rank')
+    cur = db.execute('SELECT DISTINCT rank FROM collection ORDER BY rank')
     cards = cur.fetchall()
-    cur = db.execute('SELECT * FROM collection ORDER BY card_id')
+    cur = db.execute('SELECT * FROM collection ORDER BY rank')
+
     collection = cur.fetchall()
 
     return render_template('your_inventory.html', cards=cards, collection=collection)
@@ -152,25 +153,67 @@ def logout():
     return redirect(url_for('show_entries'))
      
 
+@app.route('/pull_cards')
 def pull_cards():
     """Adds 5 cards to collections table from the total cards table using rank
             to determine the probability of pulling each card"""
     db = get_db()
 
     # create a list of weights for use in random's choice method
-    card_weight = db.execute('SELECT rank FROM cards')
-    ranks = card_weight.fetchall()
-    ranks = [rank[0] for rank in ranks]
+    card_weight = db.execute('SELECT rank FROM store')
+    ranks = [rank[0] for rank in card_weight.fetchall()]
+
+    card_population = db.execute('SELECT card_id FROM store')
+    cid_list = [card_id[0] for card_id in card_population.fetchall()]
+
+    user = db.execute('SELECT user_id FROM users')
+
+    cards_img = []
 
     # pull 5 cards from the cards table and inserts the card to the collection table
     for i in range(5):
-        pull = choices(range(1, 52), ranks)
-        ran_pull = db.execute('SELECT * FROM cards WHERE card_id = ?', pull)
+        pull = choices(cid_list, ranks)
+        ran_pull = db.execute('SELECT card_id FROM store WHERE card_id = ?', pull)
         card = ran_pull.fetchone()
-
-        db.execute('INSERT INTO collection VALUES (?, ?, ?)', card)
+        db.execute('INSERT INTO collection VALUES (?, 1)', card)
         db.commit()
 
+        img = db.execute('SELECT image FROM store WHERE card_id = ?', pull)
+        img = img.fetchone()
+        for row in img:
+            cards_img.append(row)
+
+    return render_template('pull_cards.html', cards=cards_img)
+
+
+@app.route('/add_friend', methods=['GET', 'POST'])
+def add_friend():
+    db = get_db()
+    added_friend = request.form['new_friend']
+    friend_id = db.execute("SELECT user_id FROM users WHERE username=?", [added_friend])
+    friend_check = friend_id.fetchone()
+    if friend_check is None:
+        flash('user does not exist')
+        return redirect(url_for('connect_with_friends'))
+    already_friend = db.execute("SELECT * FROM friends WHERE user1=? AND user2=?", [session['current_user'], friend_id])
+    if already_friend:
+        flash('this action has already been taken')
+        return redirect(url_for('connect_with_friends'))
+
+    flash('added friend, have them add you as well to become friends')
+    db.execute('INSERT INTO friends (user1_id, user2_id)VALUES (?, ?)', [session['current_user'], friend_id])
+
+
+
+
+@app.route('/add_cards', methods=['POST'])
+def add_cards():
+    db = get_db()
+
+    db.execute('INSERT INTO collection SELECT * FROM cards WHERE card_id=?', [request.form["id"]])
+    db.commit()
+
+    return redirect(url_for('marketplace'))
 
 @app.route('/add_friend', methods=['GET', 'POST'])
 def add_friend():
