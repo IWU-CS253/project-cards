@@ -54,7 +54,12 @@ def close_db(error):
 
 @app.route('/home')
 def home():
-    return render_template('home.html')
+    db = get_db()
+
+    cur = db.execute('SELECT wallet_balance FROM users WHERE user_id=?', [session['current_user']])
+    user = cur.fetchone()
+
+    return render_template('home.html', user=user)
 
 
 @app.route('/')
@@ -127,7 +132,7 @@ def create_user():
     if email_exists_check:
         flash('email already taken')
         return redirect(url_for('new_user_info'))
-    db.execute('insert into users (username, password, email) values (?, ?, ?)',
+    db.execute('insert into users (username, password, email, wallet_baLance) values (?, ?, ?, 500)',
                [chosen_username, hashed_pw, chosen_email])
     db.commit()
     return render_template('login.html')
@@ -149,7 +154,9 @@ def login():
     else:
         session['logged_in'] = True
         flash('You were logged in')
-        session['current_user'] = ("SELECT user_id FROM users WHERE username=?", [request.form['username']])
+        cur = db.execute("SELECT user_id FROM users WHERE username=?", [request.form['username']])
+        user = cur.fetchone()['user_id']
+        session['current_user'] = user
         return redirect(url_for('home'))
     return redirect(url_for('home'))
 
