@@ -19,10 +19,11 @@ this code is going to be inside the loop--->
   <ul class="collection">
   {% for card in collection %}
     <li>
-        <h3>{{ card.name }}</h3>
-        <i>[{{ card.rank }}]</i>
-        <p>Flavor Text! Woohoo!</p>
+        <a>{{ card.name }}</a><br>
+        <a>{{ card.rank }}</a><br>
+        <a>Flavor Text! Woohoo!</a>
     </li>
+    <br>
   {% else %}
     <em>No cards in your collection!</em>
   {% endfor %}

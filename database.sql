@@ -24,8 +24,9 @@ CREATE TABLE collection (
 drop table if exists store;
 CREATE TABLE store (
     card_id INT,
-    name VARCHAR(20),
     rank INT,
+    image VARCHAR(150),
+    pack VARCHAR(10),
     price INT
 );
 
@@ -44,4 +45,13 @@ CREATE TABLE friends (
     user2_id int,
     FOREIGN KEY (user1_id) REFERENCES users,
     FOREIGN KEY (user2_id) REFERENCES users
+);
+
+drop table if exists transactions;
+CREATE TABLE transactions (
+    user_id INT PRIMARY KEY,
+    card_id INT,
+    wallet_change INT NOT NULL,
+    FOREIGN KEY (card_id) REFERENCES cards,
+    FOREIGN KEY (user_id) REFERENCES users
 );

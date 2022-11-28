@@ -27,7 +27,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Pack</h5>
                         <p class="card-text">Pack specifications</p>
-                        <a href="#" class="btn btn-primary">Buy</a>
+                        <a href={{ url_for('pull_cards') }} class="btn btn-primary">Buy</a>
                     </div>
                 </div>
                 <div class="col">
@@ -44,6 +44,11 @@
         </div>
     </div>
 
+    <a>Buy a Pack with Random Cards!</a>
+    <form action="{{ url_for('pack_contents') }}" class="pack-button">
+        <input type="submit" class="btn btn-primary btn-lg" value="Buy a Pack!">
+    </form>
+
     <table class="table">
         <thead>
         <tr>
@@ -54,16 +59,18 @@
         </thead>
         <tbody>
         <tr>
-            {% for card in cards %}
-                <td>{{ card.name }}</td>
-                <td>Price</td>
-                <td>
-                    <form action="{{ url_for('add_cards') }}" method="post" class="add-button">
-                        <input type="hidden" name="id" value="{{ card.card_id }}" class="add-id">
-                        <input type="submit" class="btn btn-primary btn-lg" value="Buy">
-                    </form>
-                </td>
-            {% endfor %}
+            <div class="container-fluid">
+                {% for card in cards %}
+                    <td>{{ card.name }}</td>
+                    <td>Price</td>
+                    <td>
+                        <form action="{{ url_for('add_cards') }}" method="post" class="add-button">
+                            <input type="hidden" name="id" value="{{ card.card_id }}" class="add-id">
+                            <input type="submit" class="btn btn-primary btn-lg" value="Buy">
+                        </form>
+                    </td>
+                {% endfor %}
+            </div>
         </tr>
         </tbody>
     </table>
