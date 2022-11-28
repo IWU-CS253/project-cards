@@ -36,7 +36,8 @@ CREATE TABLE users (
     user_id INT PRIMARY KEY,
     username TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
-    email TEXT UNIQUE NOT NULL
+    email TEXT UNIQUE NOT NULL,
+    wallet_balance INT DEFAULT 500
 );
 
 drop table if exists friends;
@@ -45,4 +46,13 @@ CREATE TABLE friends (
     user2_id int,
     FOREIGN KEY (user1_id) REFERENCES users,
     FOREIGN KEY (user2_id) REFERENCES users
+);
+
+drop table if exists transactions;
+CREATE TABLE transactions (
+    user_id INT PRIMARY KEY,
+    card_id INT,
+    wallet_change INT NOT NULL,
+    FOREIGN KEY (card_id) REFERENCES cards,
+    FOREIGN KEY (user_id) REFERENCES users
 );
