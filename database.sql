@@ -1,4 +1,3 @@
-
 -- total cards in application table
 drop table if exists cards;
 CREATE TABLE cards (
@@ -32,7 +31,7 @@ CREATE TABLE store (
 
 drop table if exists users;
 CREATE TABLE users (
-    user_id INT PRIMARY KEY,
+    user_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     username TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
@@ -45,13 +44,4 @@ CREATE TABLE friends (
     user2_id int,
     FOREIGN KEY (user1_id) REFERENCES users,
     FOREIGN KEY (user2_id) REFERENCES users
-);
-
--- log of transactions
-CREATE TABLE transactions (
-    user_id INT PRIMARY KEY,
-    card_id INT,
-    wallet_balance INT NOT NULL,
-    FOREIGN KEY (card_id) REFERENCES cards,
-    FOREIGN KEY (user_id) REFERENCES users
 );
