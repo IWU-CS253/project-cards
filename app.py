@@ -7,7 +7,8 @@ from random import choices
 app = Flask(__name__)
 
 app.config.update(dict(
-    DATABASE=os.path.join(app.root_path, 'flaskr.db'),
+    #might have to change this back to flaskr instead of projectcards
+    DATABASE=os.path.join(app.root_path, 'projectcards.db'),
     DEBUG=True,
     SECRET_KEY='development key',
 ))
@@ -93,6 +94,17 @@ def connect_with_friends():
 def friend_inventory():
     return render_template('friend_inventory.html')
 
+@app.route('/trade')
+def trade():
+    return render_template('trade.html')
+
+@app.route('/trade_request')
+def trade_request():
+    return render_template('trade_request.html')
+
+@app.route('/trade_result')
+def trade_result():
+    return render_template('trade_result.html')
 
 @app.route('/new_user_info', methods=['GET'])
 def new_user_info():
@@ -145,34 +157,44 @@ def login():
     return redirect(url_for('home'))
 
 
-@app.route('/logout', methods=['GET'])
+@app.route('/logout', methods=['POST'])
 def logout():
     session.pop('logged_in', None)
     flash('You were logged out')
     return redirect(url_for('show_entries'))
      
 
+@app.route('/pull_cards')
 def pull_cards():
     """Adds 5 cards to collections table from the total cards table using rank
             to determine the probability of pulling each card"""
     db = get_db()
 
     # create a list of weights for use in random's choice method
-    card_weight = db.execute('SELECT rank FROM cards')
-    ranks = card_weight.fetchall()
-    ranks = [rank[0] for rank in ranks]
+    card_weight = db.execute('SELECT rank FROM store')
+    ranks = [rank[0] for rank in card_weight.fetchall()]
 
-    cards = []
+    card_population = db.execute('SELECT card_id FROM store')
+    cid_list = [card_id[0] for card_id in card_population.fetchall()]
+
+    user = db.execute('SELECT user_id FROM users')
+
+    cards_img = []
+
     # pull 5 cards from the cards table and inserts the card to the collection table
     for i in range(5):
-        pull = choices(range(1, 52), ranks)
-        ran_pull = db.execute('SELECT * FROM cards WHERE card_id = ?', pull)
+        pull = choices(cid_list, ranks)
+        ran_pull = db.execute('SELECT card_id FROM store WHERE card_id = ?', pull)
         card = ran_pull.fetchone()
-        cards = cards + [card]
-        db.execute('INSERT INTO collection VALUES (?, ?, ?)', card)
+        db.execute('INSERT INTO collection VALUES (?, 1)', card)
         db.commit()
 
-    return cards
+        img = db.execute('SELECT image FROM store WHERE card_id = ?', pull)
+        img = img.fetchone()
+        for row in img:
+            cards_img.append(row)
+
+    return render_template('pull_cards.html', cards=cards_img)
 
 
 @app.route('/add_friend', methods=['GET', 'POST'])
@@ -207,3 +229,62 @@ def add_cards():
     #cards = pull_cards()
 
     #return render_template('pack_contents.html', cards=cards)
+    
+    
+@app.route('/add_friend', methods=['GET', 'POST'])
+def add_friend():
+    db = get_db()
+    added_friend = request.form['new_friend']
+    friend_id = db.execute("SELECT user_id FROM users WHERE username=?", [added_friend])
+    user_id = db.execute("SELECT user_id FROM users WHERE username=?", [session['current_user']])
+    friend_check = friend_id.fetchone()
+    if friend_check is None:
+        flash('user does not exist')
+        return redirect(url_for('connect_with_friends'))
+    already_friend = db.execute("SELECT * FROM friends WHERE user1=? AND user2=?", [user_id, friend_id])
+    if already_friend:
+        flash('this action has already been taken')
+        return redirect(url_for('connect_with_friends'))
+
+    flash('added friend, have them add you as well to become friends')
+    db.execute('INSERT INTO friends (user1_id, user2_id)VALUES (?, ?)', [user_id, friend_id])
+
+
+@app.route('/add_cards', methods=['POST'])
+def add_cards():
+    db = get_db()
+
+    db.execute('INSERT INTO collection SELECT * FROM cards WHERE card_id=?', [request.form["id"]])
+    db.commit()
+
+    return redirect(url_for('marketplace'))
+
+
+@app.route('/purchase', methods=['GET'])
+def purchase(amount):
+    # use this method every time there is a purchase(pack or card) it will limit duplication of code in our application.
+    # decreases the wallet of the logged-in user by the amount of the purchase, which is passed in as argument
+    db = get_db()
+    user_wallet = db.execute('SELECT wallet_balance FROM users WHERE username=?', [session['current_user']])
+    user_wallet = user_wallet.fetchone().wallet_balance
+    new_balance = user_wallet-amount
+    db.execute("UPDATE users SET wallet_balance=? WHERE username=?", [new_balance, session['current_user']])
+    db.commit()
+
+
+@app.route('/buy_cards', methods=['GET'])
+def buy_card(card_id):
+    # This function is used when purchasing an individual card: takes the id of the desired card as argument
+    # and calls the purchase method with the card price to adjust the user wallet
+    # Also inserts the card with corresponding id into the collection table
+    db = get_db()
+    user_id = db.execute("SELECT user_id FROM users WHERE username=?", [session['current_user']])
+    user_id = user_id.fetchone().user_id
+    card_price = db.execute("SELECT price FROM store WHERE card_id=?", [card_id])
+    card_price = card_price.fetchone().card_price
+    purchase(card_price)
+    db.execute('INSERT INTO collection SELECT * FROM cards WHERE card_id=?', [card_id])
+    db.execute('INSERT INTO transactions (user_id, card_id, wallet_change) VALUES (?, ?, ?)',
+               [user_id, card_id, card_price])
+    flash('Successfully purchased a card')
+    db.commit()
