@@ -66,9 +66,9 @@ def show_entries():
 def your_inventory():
     db = get_db()
 
-    cur = db.execute('SELECT DISTINCT rank FROM collection ORDER BY rank')
+    cur = db.execute('SELECT DISTINCT rank FROM cards ORDER BY rank')
     cards = cur.fetchall()
-    cur = db.execute('SELECT * FROM collection ORDER BY rank')
+    cur = db.execute("SELECT * FROM cards JOIN collection ON collection.card_id = cards.card_id")
     collection = cur.fetchall()
 
     return render_template('your_inventory.html', cards=cards, collection=collection)
@@ -139,7 +139,8 @@ def login():
     else:
         session['logged_in'] = True
         flash('You were logged in')
-        session['current_user'] = ("SELECT user_id FROM users WHERE username=?", [request.form['username']])
+        cur = db.execute("SELECT user_id FROM users WHERE username=?", [request.form['username']])
+        session['current_user'] = cur.fetchone()['user_id']
         return redirect(url_for('home'))
     return redirect(url_for('home'))
 
@@ -161,15 +162,17 @@ def pull_cards():
     ranks = card_weight.fetchall()
     ranks = [rank[0] for rank in ranks]
 
+    cards = []
     # pull 5 cards from the cards table and inserts the card to the collection table
     for i in range(5):
         pull = choices(range(1, 52), ranks)
         ran_pull = db.execute('SELECT * FROM cards WHERE card_id = ?', pull)
         card = ran_pull.fetchone()
-
+        cards = cards + [card]
         db.execute('INSERT INTO collection VALUES (?, ?, ?)', card)
         db.commit()
 
+    return cards
 
 
 @app.route('/add_friend', methods=['GET', 'POST'])
@@ -190,14 +193,17 @@ def add_friend():
     db.execute('INSERT INTO friends (user1_id, user2_id)VALUES (?, ?)', [session['current_user'], friend_id])
 
 
-
-
 @app.route('/add_cards', methods=['POST'])
 def add_cards():
     db = get_db()
-
-    db.execute('INSERT INTO collection SELECT * FROM cards WHERE card_id=?', [request.form["id"]])
+    db.execute('INSERT INTO collection VALUES(?,?)', [request.form['id'], session['current_user']])
     db.commit()
 
     return redirect(url_for('marketplace'))
 
+
+#@app.route('/pack_contents')
+#def pack_contents():
+    #cards = pull_cards()
+
+    #return render_template('pack_contents.html', cards=cards)
