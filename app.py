@@ -3,6 +3,7 @@ from sqlite3 import dbapi2 as sqlite3
 from flask import Flask, request, g, redirect, url_for, render_template, flash, session
 import werkzeug
 from random import choices
+import csv
 
 app = Flask(__name__)
 
@@ -25,9 +26,25 @@ def connect_db():
 def init_db():
     """Initializes the database."""
     db = get_db()
+
     with app.open_resource('database.sql', mode='r') as f:
         db.cursor().executescript(f.read())
+
     db.commit()
+
+    database = os.path.join(app.root_path, 'projectcards.db')
+    connection = sqlite3.connect(database)
+    cursor = connection.cursor()
+    file = os.path.join(app.root_path, 'cards_csv\\test_pack.csv')
+    contents = csv.reader(open(file))
+    insert_records = "INSERT INTO store (card_id, rank, image, pack, price) VALUES(?, ?, ?, ?, ?);"
+    cursor.executemany(insert_records, contents)
+    file_cards = os.path.join(app.root_path, 'cards_csv\\all_cards.csv')
+    insert_cards = "INSERT INTO cards (card_id, name, rank) VALUES (?, ?, ?);"
+    contents_cards = csv.reader(open(file_cards))
+    cursor.executemany(insert_cards, contents_cards)
+    connection.commit()
+    connection.close()
 
 
 @app.cli.command('initdb')
@@ -74,7 +91,7 @@ def your_inventory():
 
     cur = db.execute('SELECT DISTINCT rank FROM cards ORDER BY rank')
     cards = cur.fetchall()
-    cur = db.execute("SELECT * FROM cards JOIN collection ON collection.card_id = cards.card_id")
+    cur = db.execute("SELECT * FROM cards JOIN collection ON collection.card_id = cards.card_id WHERE collection.user_id=?", [session['current_user']])
     collection = cur.fetchall()
 
     return render_template('your_inventory.html', cards=cards, collection=collection)
@@ -99,17 +116,21 @@ def connect_with_friends():
 def friend_inventory():
     return render_template('friend_inventory.html')
 
+
 @app.route('/trade')
 def trade():
     return render_template('trade.html')
+
 
 @app.route('/trade_request')
 def trade_request():
     return render_template('trade_request.html')
 
+
 @app.route('/trade_result')
 def trade_result():
     return render_template('trade_result.html')
+
 
 @app.route('/wallet_balance', methods=['POST'])
 def wallet_balance():
@@ -172,7 +193,7 @@ def login():
     return redirect(url_for('home'))
 
 
-@app.route('/logout', methods=['POST'])
+@app.route('/logout', methods=['GET'])
 def logout():
     session.pop('logged_in', None)
     flash('You were logged out')
@@ -187,12 +208,9 @@ def pull_cards():
 
     # create a list of weights for use in random's choice method
     card_weight = db.execute('SELECT rank FROM store')
-    ranks = [rank[0] for rank in card_weight.fetchall()]
-
+    ranks = [float(rank[0]) for rank in card_weight.fetchall()]
     card_population = db.execute('SELECT card_id FROM store')
     cid_list = [card_id[0] for card_id in card_population.fetchall()]
-
-    user = db.execute('SELECT user_id FROM users')
 
     cards_img = []
 
@@ -201,7 +219,7 @@ def pull_cards():
         pull = choices(cid_list, ranks)
         ran_pull = db.execute('SELECT card_id FROM store WHERE card_id = ?', pull)
         card = ran_pull.fetchone()
-        db.execute('INSERT INTO collection VALUES (?, 1)', card)
+        db.execute('INSERT INTO collection(card_id, user_id) VALUES (?, ?)', [card[0], session['current_user']])
         db.commit()
 
         img = db.execute('SELECT image FROM store WHERE card_id = ?', pull)
@@ -210,6 +228,7 @@ def pull_cards():
             cards_img.append(row)
 
     return render_template('pull_cards.html', cards=cards_img)
+
 
 @app.route('/add_friend', methods=['GET', 'POST'])
 def add_friend():
@@ -232,8 +251,11 @@ def add_friend():
 @app.route('/add_cards', methods=['POST'])
 def add_cards():
     db = get_db()
-
-    db.execute('INSERT INTO collection SELECT * FROM cards WHERE card_id=?', [request.form["id"]])
+    cur = db.execute('SELECT card_id FROM cards WHERE card_id=?', [request.form['id']])
+    card = cur.fetchone()
+    print(card[0])
+    print(session['current_user'])
+    db.execute('INSERT INTO collection(card_id, user_id) VALUES(?, ?)', [card[0], session['current_user']])
     db.commit()
 
     return redirect(url_for('marketplace'))
