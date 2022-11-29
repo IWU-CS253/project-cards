@@ -24,7 +24,7 @@ CREATE TABLE collection (
 drop table if exists store;
 CREATE TABLE store (
     card_id INT,
-    rank INT,
+    rank VARCHAR(10),
     image VARCHAR(150),
     pack VARCHAR(10),
     price INT
