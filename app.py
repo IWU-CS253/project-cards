@@ -234,12 +234,13 @@ def pull_cards():
 def add_friend():
     db = get_db()
     added_friend = request.form['new_friend']
-    friend_id = db.execute("SELECT user_id FROM users WHERE username=?", [added_friend])
-    friend_check = friend_id.fetchone()
-    if friend_check is None:
+    friend_id = db.execute("SELECT user_id FROM users WHERE username=?", [added_friend]).fetchone()
+    #friend_id = friend_id[0]
+    if friend_id is None:
         flash('user does not exist')
         return redirect(url_for('connect_with_friends'))
-    already_friend = db.execute("SELECT * FROM friends WHERE user1=? AND user2=?", [session['current_user'], friend_id])
+    friend_id = friend_id[0]
+    already_friend = db.execute("SELECT * FROM friends WHERE user1_id=? AND user2_id=?", [session['current_user'], friend_id])
     if already_friend:
         flash('this action has already been taken')
         return redirect(url_for('connect_with_friends'))
