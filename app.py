@@ -234,18 +234,23 @@ def pull_cards():
 def add_friend():
     db = get_db()
     added_friend = request.form['new_friend']
-    friend_id = db.execute("SELECT user_id FROM users WHERE username=?", [added_friend])
-    friend_check = friend_id.fetchone()
-    if friend_check is None:
+    friend_id = db.execute("SELECT user_id FROM users WHERE username=?", [added_friend]).fetchone()
+    #friend_id = friend_id[0]
+    if friend_id is None:
         flash('user does not exist')
         return redirect(url_for('connect_with_friends'))
-    already_friend = db.execute("SELECT * FROM friends WHERE user1=? AND user2=?", [session['current_user'], friend_id])
-    if already_friend:
-        flash('this action has already been taken')
-        return redirect(url_for('connect_with_friends'))
+    friend_id = friend_id[0]
+    already_friend = db.execute("SELECT * FROM friends WHERE user1_id=? AND user2_id=?", [session['current_user'],
+                                                                                          friend_id])
+    # commented out to test displaying friends list - may be preventing the addition of friends in the first place
+    # if already_friend is not None:
+    #     flash('this action has already been taken')
+    #     return redirect(url_for('connect_with_friends'))
 
     flash('added friend, have them add you as well to become friends')
     db.execute('INSERT INTO friends (user1_id, user2_id)VALUES (?, ?)', [session['current_user'], friend_id])
+    db.commit()
+    return redirect(url_for('connect_with_friends'))
   
   
 @app.route('/add_cards', methods=['POST'])
@@ -266,26 +271,53 @@ def purchase(amount):
     # use this method every time there is a purchase(pack or card) it will limit duplication of code in our application.
     # decreases the wallet of the logged-in user by the amount of the purchase, which is passed in as argument
     db = get_db()
-    user_wallet = db.execute('SELECT wallet_balance FROM users WHERE username=?', [session['current_user']])
-    user_wallet = user_wallet.fetchone().wallet_balance
-    new_balance = user_wallet-amount
-    db.execute("UPDATE users SET wallet_balance=? WHERE username=?", [new_balance, session['current_user']])
+    broke = False
+    user_wallet = db.execute('SELECT wallet_balance FROM users WHERE user_id=?', [session['current_user']])
+    user_wallet = user_wallet.fetchone()[-1]
+    new_balance = (user_wallet - amount)
+    if new_balance < 0:
+        flash('insufficient funds: get ya money up')
+        broke = True
+        return broke
+    db.execute("UPDATE users SET wallet_balance=? WHERE user_id=?", [new_balance, session['current_user']])
     db.commit()
+    return broke
 
 
-@app.route('/buy_cards', methods=['GET'])
-def buy_card(card_id):
+@app.route('/buy_cards', methods=['POST'])
+def buy_card():
     # This function is used when purchasing an individual card: takes the id of the desired card as argument
     # and calls the purchase method with the card price to adjust the user wallet
     # Also inserts the card with corresponding id into the collection table
     db = get_db()
-    user_id = db.execute("SELECT user_id FROM users WHERE username=?", [session['current_user']])
-    user_id = user_id.fetchone().user_id
-    card_price = db.execute("SELECT price FROM store WHERE card_id=?", [card_id])
-    card_price = card_price.fetchone().card_price
-    purchase(card_price)
-    db.execute('INSERT INTO collection SELECT * FROM cards WHERE card_id=?', [card_id])
-    db.execute('INSERT INTO transactions (user_id, card_id, wallet_change) VALUES (?, ?, ?)',
-               [user_id, card_id, card_price])
+    cur = db.execute('SELECT card_id FROM cards WHERE card_id=?', [request.form['id']])
+    card_id = cur.fetchone()
+    # user_id = db.execute("SELECT user_id FROM users WHERE username=?", [session['current_user']])
+    # user_id = user_id.fetchone().user_id
+    card_price = db.execute("SELECT price FROM store WHERE card_id=?", card_id)
+    card_price = card_price.fetchone()[-1]
+    broke_check = purchase(card_price)
+    if broke_check:
+        return redirect(url_for('marketplace'))
+    add_cards()
+    # db.execute('INSERT INTO collection SELECT * FROM cards WHERE card_id=?', [card_id])
+
+    # transactions table line commented out bc an error is interfering with testing buy_cards
+    # db.execute('INSERT INTO transactions (user_id, card_id, wallet_change) VALUES (?, ?, ?)',
+    #             session['current_user'], card_id, card_price)
     flash('Successfully purchased a card')
     db.commit()
+    return redirect(url_for('marketplace'))
+
+
+@app.route('/show_friends', methods=['GET'])
+def show_friends():
+    db = get_db()
+    cur = db.execute('SELECT * FROM friends WHERE user1_id=?', [session['current_user']])
+    friend_list = []
+    friends_list = cur.fetchall()
+    for i in friends_list:
+        friend_username = db.execute('SELECT username FROM users WHERE user_id=?', [i[1]])
+        f = friend_username.fetchone()[0]
+        friend_list.append(f)
+    return render_template('friends.html', friend_list=friend_list)
