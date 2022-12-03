@@ -75,9 +75,12 @@ def home():
     db = get_db()
 
     cur = db.execute('SELECT wallet_balance FROM users WHERE user_id=?', [session['current_user']])
+    wallet = cur.fetchone()
+
+    cur = db.execute('SELECT username FROM users WHERE user_id=?', [session['current_user']])
     user = cur.fetchone()
 
-    return render_template('home.html', user=user)
+    return render_template('home.html', wallet=wallet, user=user)
 
 
 @app.route('/')
@@ -140,6 +143,21 @@ def wallet_balance():
     user_wallet_check = user_wallet.fetchone()
     if user_wallet_check:
         return render_template('home.html', user_wallet=user_wallet_check)
+
+
+@app.route('/sell_cards', methods=['POST'])
+def sell_cards():
+    db = get_db()
+
+
+@app.route('/get_user', methods=['POST'])
+def get_user():
+    db = get_db()
+    user = request.form['username']
+    user_exist = db.execute("SELECT wallet_balance FROM users WHERE username=?", [user])
+    user_exist_check = user_exist.fetchone()
+    if user_exist_check:
+        return render_template('home.html', user_exist=user_exist_check)
 
 
 @app.route('/new_user_info', methods=['GET'])
