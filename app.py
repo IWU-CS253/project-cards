@@ -242,12 +242,15 @@ def add_friend():
     friend_id = friend_id[0]
     already_friend = db.execute("SELECT * FROM friends WHERE user1_id=? AND user2_id=?", [session['current_user'],
                                                                                           friend_id])
-    if already_friend is not None:
-        flash('this action has already been taken')
-        return redirect(url_for('connect_with_friends'))
+    # commented out to test displaying friends list - may be preventing the addition of friends in the first place
+    # if already_friend is not None:
+    #     flash('this action has already been taken')
+    #     return redirect(url_for('connect_with_friends'))
 
     flash('added friend, have them add you as well to become friends')
     db.execute('INSERT INTO friends (user1_id, user2_id)VALUES (?, ?)', [session['current_user'], friend_id])
+    db.commit()
+    return redirect(url_for('connect_with_friends'))
   
   
 @app.route('/add_cards', methods=['POST'])
@@ -305,3 +308,16 @@ def buy_card():
     flash('Successfully purchased a card')
     db.commit()
     return redirect(url_for('marketplace'))
+
+
+@app.route('/show_friends', methods=['GET'])
+def show_friends():
+    db = get_db()
+    cur = db.execute('SELECT * FROM friends WHERE user1_id=?', [session['current_user']])
+    friend_list = []
+    friends_list = cur.fetchall()
+    for i in friends_list:
+        friend_username = db.execute('SELECT username FROM users WHERE user_id=?', [i[1]])
+        f = friend_username.fetchone()[0]
+        friend_list.append(f)
+    return render_template('friends.html', friend_list=friend_list)
