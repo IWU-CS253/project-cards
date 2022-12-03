@@ -40,7 +40,7 @@ def init_db():
     insert_records = "INSERT INTO store (card_id, rank, image, pack, price) VALUES(?, ?, ?, ?, ?);"
     cursor.executemany(insert_records, contents)
     file_cards = os.path.join(app.root_path, 'cards_csv/all_cards.csv')
-    insert_cards = "INSERT INTO cards (card_id, name, rank) VALUES (?, ?, ?);"
+    insert_cards = "INSERT INTO cards (card_id, name, rank, price) VALUES (?, ?, ?, ?);"
     contents_cards = csv.reader(open(file_cards))
     cursor.executemany(insert_cards, contents_cards)
     connection.commit()

@@ -5,7 +5,8 @@ CREATE TABLE cards (
     name VARCHAR(20),
 
     -- 5 ranks in increasing rarity
-    rank INT
+    rank INT,
+    price INT
 );
 
 
