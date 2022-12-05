@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
-    <h3>Wallet Balance = {{ user.wallet_balance }}</h3>
+    <h2>{{ user.username }}</h2>
+    <h3>Wallet Balance = {{ wallet.wallet_balance }}</h3>
 </head>
 <body>
 <div class="container text-center">
@@ -24,9 +25,6 @@
                 <a href="{{ url_for('trade') }}">Trading</a>
                  <p>Trade cards with your friends!</p>
             </div>
-
-
-
 
         <div class="col-4">
             <a>Complete Collections</a>
