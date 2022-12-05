@@ -35,14 +35,17 @@ def init_db():
     database = os.path.join(app.root_path, 'projectcards.db')
     connection = sqlite3.connect(database)
     cursor = connection.cursor()
-    file = os.path.join(app.root_path, 'cards_csv\\test_pack.csv')
+
+    file = os.path.join(app.root_path, 'cards_csv', 'test_pack.csv')
     contents = csv.reader(open(file))
-    insert_records = "INSERT INTO store (card_id, rank, image, pack, price) VALUES(?, ?, ?, ?, ?);"
+    insert_records = "INSERT OR REPLACE INTO store (card_id, rank, image, pack, price) VALUES(?, ?, ?, ?, ?);"
     cursor.executemany(insert_records, contents)
+
     file_cards = os.path.join(app.root_path, 'cards_csv\\all_cards.csv')
-    insert_cards = "INSERT INTO cards (card_id, name, rank) VALUES (?, ?, ?);"
+    insert_cards = "INSERT OR REPLACE INTO cards (card_id, name, rank) VALUES (?, ?, ?);"
     contents_cards = csv.reader(open(file_cards))
     cursor.executemany(insert_cards, contents_cards)
+
     connection.commit()
     connection.close()
 
@@ -91,7 +94,7 @@ def your_inventory():
 
     cur = db.execute('SELECT DISTINCT rank FROM cards ORDER BY rank')
     cards = cur.fetchall()
-    cur = db.execute("SELECT * FROM cards JOIN collection ON collection.card_id = cards.card_id WHERE collection.user_id=?", [session['current_user']])
+    cur = db.execute("SELECT * FROM cards JOIN collection ON collection.card_id = cards.card_id WHERE collection.user_id=?",[session['current_user']])
     collection = cur.fetchall()
 
     return render_template('your_inventory.html', cards=cards, collection=collection)
@@ -154,7 +157,7 @@ def create_user():
     user_exists = db.execute("SELECT password FROM users WHERE username=?", [chosen_username])
     user_exists_check = user_exists.fetchone()
     if user_exists_check:
-        flash('username already taken')
+        flash('Username already taken')
         return redirect(url_for('new_user_info'))
 
     hashed_pw = werkzeug.security.generate_password_hash(request.form['choose_password'], method='pbkdf2:sha256',
@@ -163,11 +166,12 @@ def create_user():
     email_exists = db.execute("SELECT password FROM users WHERE email=?", [chosen_email])
     email_exists_check = email_exists.fetchone()
     if email_exists_check:
-        flash('email already taken')
+        flash('Email is already taken')
         return redirect(url_for('new_user_info'))
     db.execute('insert into users (username, password, email, wallet_baLance) values (?, ?, ?, 500)',
                [chosen_username, hashed_pw, chosen_email])
     db.commit()
+    flash('Account Created')
     return render_template('login.html')
 
 
@@ -178,11 +182,10 @@ def login():
     pswd = db.execute("SELECT password FROM users WHERE username=?", [request.form['username']])
     pw_check = pswd.fetchone()
     if pw_check is None:
-        flash('invalid username')
+        flash('Invalid username')
         return redirect(url_for('show_entries'))
     if not werkzeug.security.check_password_hash(pw_check['password'], request.form['password']):
-        error = 'Invalid password'
-        flash('incorrect password')
+        flash('Invalid password')
         return redirect(url_for('show_entries'))
     else:
         session['logged_in'] = True
@@ -253,8 +256,6 @@ def add_cards():
     db = get_db()
     cur = db.execute('SELECT card_id FROM cards WHERE card_id=?', [request.form['id']])
     card = cur.fetchone()
-    print(card[0])
-    print(session['current_user'])
     db.execute('INSERT INTO collection(card_id, user_id) VALUES(?, ?)', [card[0], session['current_user']])
     db.commit()
 

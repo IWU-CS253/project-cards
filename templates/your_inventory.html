@@ -5,9 +5,9 @@
 <h1>Card Filter</h1>
     <h2>Filter cards by rarity!</h2>
     <ul class="cards">
-        <li><a href="?">[all]</a></li>
+        <li><a href="?">All Cards</a></li>
         {% for card in cards %}
-            <li><a href="?rank={{ card.rank }}">{{ card.rank }}</a></li>
+            <li><a class="btn btn-outline-secondary" href="?rank={{ card.rank }}">{{ card.rank }}</a></li>
         {% endfor %}
     </ul>
 
@@ -19,9 +19,9 @@ this code is going to be inside the loop--->
   <ul class="collection">
   {% for card in collection %}
     <li>
-        <a>{{ card.name }}</a><br>
-        <a>{{ card.rank }}</a><br>
-        <a>Flavor Text! Woohoo!</a>
+        <h4>{{ card.name }}</h4><br>
+        <h4>{{ card.rank }}</h4><br>
+        <h4>Flavor Text! Woohoo!</h4>
     </li>
     <br>
   {% else %}
