@@ -23,33 +23,24 @@
         <div class="row">
             <div class="col">
                 <div class="card" style="width: 18rem;">
-                    <img src="..." class="card-img-top" alt="...">
                     <div class="card-body">
                         <h5 class="card-title">Pack</h5>
-                        <p class="card-text">Pack specifications</p>
-                        <a href="{{ url_for('pull_cards') }}"    class="btn btn-primary">Buy</a>
+                        <p class="card-text">Pack to Pull Cards</p>
+                        <a href="{{ url_for('pull_cards') }}" class="btn btn-primary">Buy</a>
                     </div>
                 </div>
                 <div class="col">
                     <div class="card" style="width: 18rem;">
-                        <img src="..." class="card-img-top" alt="...">
                         <div class="card-body">
                             <h5 class="card-title">Pack</h5>
-                            <p class="card-text">Pack specifications</p>
-                            <a href="#" class="btn btn-primary">Buy</a>
+                            <p class="card-text">Pack with Random Cards</p>
+                            <a href="{{ url_for('pull_cards') }}" class="btn btn-primary">Buy</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-
-    <a>Buy a Pack with Random Cards! (250)</a>
-    <form action="{{ url_for('pull_cards') }}" class="pack-button">
-        <input type="submit" class="btn btn-primary btn-lg" value="Buy a Pack!">
-    </form>
-
 
     <table class="table">
         <thead>

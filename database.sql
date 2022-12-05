@@ -1,7 +1,7 @@
 -- total cards in application table
 drop table if exists cards;
 CREATE TABLE cards (
-    card_id INT PRIMARY KEY,
+    card_id INTEGER PRIMARY KEY AUTOINCREMENT,
     name VARCHAR(20),
 
     -- 5 ranks in increasing rarity
@@ -14,8 +14,9 @@ CREATE TABLE cards (
 -- ownership table, card and user attribute as foreign keys
 drop table if exists collection;
 CREATE TABLE collection (
-    card_id int,
-    user_id int,
+    delete_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    card_id INT,
+    user_id INT,
     FOREIGN KEY (card_id) REFERENCES cards,
     FOREIGN KEY (user_id) REFERENCES users
 );

@@ -8,7 +8,7 @@ import csv
 app = Flask(__name__)
 
 app.config.update(dict(
-    #might have to change this back to flaskr instead of projectcards
+    # might have to change this back to flaskr instead of projectcards
     DATABASE=os.path.join(app.root_path, 'projectcards.db'),
     DEBUG=True,
     SECRET_KEY='development key',
@@ -75,9 +75,12 @@ def home():
     db = get_db()
 
     cur = db.execute('SELECT wallet_balance FROM users WHERE user_id=?', [session['current_user']])
+    wallet = cur.fetchone()
+
+    cur = db.execute('SELECT username FROM users WHERE user_id=?', [session['current_user']])
     user = cur.fetchone()
 
-    return render_template('home.html', user=user)
+    return render_template('home.html', wallet=wallet, user=user)
 
 
 @app.route('/')
@@ -140,6 +143,21 @@ def wallet_balance():
     user_wallet_check = user_wallet.fetchone()
     if user_wallet_check:
         return render_template('home.html', user_wallet=user_wallet_check)
+
+
+@app.route('/sell_cards', methods=['POST'])
+def sell_cards():
+    db = get_db()
+
+
+@app.route('/get_user', methods=['POST'])
+def get_user():
+    db = get_db()
+    user = request.form['username']
+    user_exist = db.execute("SELECT wallet_balance FROM users WHERE username=?", [user])
+    user_exist_check = user_exist.fetchone()
+    if user_exist_check:
+        return render_template('home.html', user_exist=user_exist_check)
 
 
 @app.route('/new_user_info', methods=['GET'])
@@ -263,8 +281,6 @@ def add_cards():
     db = get_db()
     cur = db.execute('SELECT card_id FROM cards WHERE card_id=?', [request.form['id']])
     card = cur.fetchone()
-    print(card[0])
-    print(session['current_user'])
     db.execute('INSERT INTO collection(card_id, user_id) VALUES(?, ?)', [card[0], session['current_user']])
     db.commit()
 
@@ -297,19 +313,13 @@ def buy_card():
     db = get_db()
     cur = db.execute('SELECT card_id FROM cards WHERE card_id=?', [request.form['id']])
     card_id = cur.fetchone()
-    # user_id = db.execute("SELECT user_id FROM users WHERE username=?", [session['current_user']])
-    # user_id = user_id.fetchone().user_id
     card_price = db.execute("SELECT price FROM store WHERE card_id=?", card_id)
     card_price = card_price.fetchone()[-1]
     broke_check = purchase(card_price)
     if broke_check:
         return redirect(url_for('marketplace'))
     add_cards()
-    # db.execute('INSERT INTO collection SELECT * FROM cards WHERE card_id=?', [card_id])
 
-    # transactions table line commented out bc an error is interfering with testing buy_cards
-    # db.execute('INSERT INTO transactions (user_id, card_id, wallet_change) VALUES (?, ?, ?)',
-    #             session['current_user'], card_id, card_price)
     flash('Successfully purchased a card')
     db.commit()
     return redirect(url_for('marketplace'))
@@ -326,3 +336,32 @@ def show_friends():
         f = friend_username.fetchone()[0]
         friend_list.append(f)
     return render_template('friends.html', friend_list=friend_list)
+
+
+@app.route('/sell', methods=['GET'])
+def sell(amount):
+    db = get_db()
+    user_wallet = db.execute('SELECT wallet_balance FROM users WHERE user_id=?', [session['current_user']])
+    user_wallet = user_wallet.fetchone()[-1]
+    add_balance = (user_wallet + amount)
+
+    db.execute("UPDATE users SET wallet_balance=? WHERE user_id=?", [add_balance, session['current_user']])
+    db.commit()
+
+
+@app.route('/sell_card', methods=['POST'])
+def sell_card():
+    db = get_db()
+    cur = db.execute('SELECT card_id FROM collection WHERE card_id=?', [request.form['id']])
+    card_id = cur.fetchone()
+    sell_price = db.execute('SELECT price FROM cards WHERE card_id=?', card_id)
+    price = sell_price.fetchone()[-1]
+    delete = db.execute('SELECT delete_id FROM collection WHERE delete_id=?', [request.form['delete_id']])
+    delete_id = delete.fetchone()
+    delete_card = db.execute('DELETE FROM collection WHERE delete_id=?', delete_id)
+    delete_card = delete_card.fetchone()
+    sell(price)
+
+    flash('Successfully sold a card')
+    db.commit()
+    return redirect(url_for('your_inventory'))
