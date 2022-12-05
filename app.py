@@ -35,7 +35,7 @@ def init_db():
     database = os.path.join(app.root_path, 'projectcards.db')
     connection = sqlite3.connect(database)
     cursor = connection.cursor()
-    file = os.path.join(app.root_path, 'cards_csv/test_pack.csv')
+    file = os.path.join(app.root_path, 'cards_csv/mix_pack1.csv')
     contents = csv.reader(open(file))
     insert_records = "INSERT INTO store (card_id, rank, image, pack, price) VALUES(?, ?, ?, ?, ?);"
     cursor.executemany(insert_records, contents)
@@ -204,30 +204,35 @@ def logout():
 def pull_cards():
     """Adds 5 cards to collections table from the total cards table using rank
             to determine the probability of pulling each card"""
-    db = get_db()
+    if not purchase(250):
+        db = get_db()
 
-    # create a list of weights for use in random's choice method
-    card_weight = db.execute('SELECT rank FROM store')
-    ranks = [float(rank[0]) for rank in card_weight.fetchall()]
-    card_population = db.execute('SELECT card_id FROM store')
-    cid_list = [card_id[0] for card_id in card_population.fetchall()]
+        # create a list of weights for use in random's choice method
+        card_weight = db.execute('SELECT rank FROM store')
+        ranks = [float(rank[0]) for rank in card_weight.fetchall()]
+        card_population = db.execute('SELECT card_id FROM store')
+        cid_list = [card_id[0] for card_id in card_population.fetchall()]
 
-    cards_img = []
+        cards_img = []
 
-    # pull 5 cards from the cards table and inserts the card to the collection table
-    for i in range(5):
-        pull = choices(cid_list, ranks)
-        ran_pull = db.execute('SELECT card_id FROM store WHERE card_id = ?', pull)
-        card = ran_pull.fetchone()
-        db.execute('INSERT INTO collection(card_id, user_id) VALUES (?, ?)', [card[0], session['current_user']])
-        db.commit()
+        # pull 5 cards from the cards table and inserts the card to the collection table
+        for i in range(5):
+            pull = choices(cid_list, ranks)
+            ran_pull = db.execute('SELECT card_id FROM store WHERE card_id = ?', pull)
+            card = ran_pull.fetchone()
+            db.execute('INSERT INTO collection(card_id, user_id) VALUES (?, ?)', [card[0], session['current_user']])
+            db.commit()
 
-        img = db.execute('SELECT image FROM store WHERE card_id = ?', pull)
-        img = img.fetchone()
-        for row in img:
-            cards_img.append(row)
+            img = db.execute('SELECT image FROM store WHERE card_id = ?', pull)
+            img = img.fetchone()
+            for row in img:
+                cards_img.append(row)
 
-    return render_template('pull_cards.html', cards=cards_img)
+        return render_template('pull_cards.html', cards=cards_img)
+
+    else:
+        return redirect(url_for('marketplace'))
+
 
 
 @app.route('/add_friend', methods=['GET', 'POST'])
