@@ -30,13 +30,6 @@ this code is going to be inside the loop --->
 
 <!---- Idea taken from categories code from Flaskr assignment --->
 <h2>Friends</h2>
-    <ul class="friends">
-        <li><a href="?">Friends</a></li>
-        {% for friend in friends %}
-            <li><a href="?friend={{ friend.friend }}">{{ friend.friend }}</a></li>
-        {% endfor %}
-    </ul>
-
 <table class="table">
   <thead>
     <tr>
@@ -45,36 +38,25 @@ this code is going to be inside the loop --->
       <th scope="col">Trade</th>
     </tr>
   </thead>
-  <tbody>
-    <tr>
-      <td>Garrett Swingler</td>
-      <td><a class="btn btn-primary btn-lg" href="{{ url_for('friend_inventory') }}" role="button">Collection</a></td>
-      <td>
-          <form action="{{ url_for('home') }}" method="post" class="trade-button">
-              <button type="button" class="btn btn-primary btn-lg">Trade</button>
-          </form>
-      </td>
-    </tr>
-    <tr>
-      <td>Dino Biggers</td>
-      <td><a class="btn btn-primary btn-lg" href="{{ url_for('friend_inventory') }}" role="button">Collection</a></td>
-      <td>
-          <form action="{{ url_for('home') }}" method="post" class="trade-button">
-              <button type="button" class="btn btn-primary btn-lg">Trade</button>
-          </form>
-      </td>
-    </tr>
-    <tr>
-      <td>Eric Torres</td>
-      <td><a class="btn btn-primary btn-lg" href="{{ url_for('friend_inventory') }}" role="button">Collection</a></td>
-      <td>
-          <form action="{{ url_for('home') }}" method="post" class="trade-button">
-              <button type="button" class="btn btn-primary btn-lg">Trade</button>
-          </form>
-      </td>
+    <ul class="friends">
+        <li><a href="{{ url_for('show_friends') }}">Friends List</a></li>
 
+        {% for friend in friend_list %}
+            <li>{{ friend }}</li>
+        <tbody>
+    <tr>
+      <td>{{friend}}</td>
+      <td><a class="btn btn-primary btn-lg" href="{{ url_for('friend_inventory') }}" role="button">Collection</a></td>
+      <td>
+          <form action="{{ url_for('home') }}" method="post" class="trade-button">
+              <button type="button" class="btn btn-primary btn-lg">Trade</button>
+          </form>
+      </td>
     </tr>
-  </tbody>
+        {% endfor %}
+        </tbody>
+
+    </ul>
 </table>
 
     <div class="container text-center">
