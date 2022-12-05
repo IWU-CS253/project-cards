@@ -86,7 +86,7 @@ Conversion notes:
 * Terasence 
     * Trade function still needs to be tested and reviewed by Mark or Evan
 
-**Important things we learned: **
+**Important things we learned:**
 
 
 
@@ -152,7 +152,7 @@ def link_converter():
 * Terasence 
     * Went to office hours and used flaskr plus plus to help with database modifications
 
-**Plan for final 2 weeks: **
+**Plan for final 2 weeks:**
 
 
 
