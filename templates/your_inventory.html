@@ -26,7 +26,11 @@ this code is going to be inside the loop--->
                         <div class="card-body"><a>{{ card.name }}</a><br>
                             <div class="card-body"><a>{{ card.rank }}</a><br>
                                 <p class="card-text"><a>Flavor Text! Woohoo!</a>
-                                <br>
+                                <form action="{{ url_for('sell_card') }}" method="post" class="add-button">
+                                    <input type="hidden" name="id" value="{{ card.card_id }}" class="add-id">
+                                    <input type="hidden" name="delete_id" value="{{ card.delete_id }}" class="add-id">
+                                    <input type="submit" class="btn btn-primary btn-lg" value="Sell">
+                                </form>
                             </div>
                         </div>
                     </div>
