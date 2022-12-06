@@ -85,6 +85,7 @@ def friend_inventory():
 def trade():
     return render_template('trade.html')
 
+
 @app.route('/trade_request')
 def trade_request():
     return render_template('trade_request.html')
@@ -141,6 +142,49 @@ def login():
         current_user = db.execute("SELECT user_id FROM users WHERE username=?", [request.form['username']])
         return redirect(url_for('home'))
     return redirect(url_for('home'))
+
+@app.route('/trade', methods=['POST'])
+def sendtrade():
+    """updates ownership in database"""
+    db = get_db()
+    current_user = db.execute("UPDATE card_id FROM collection WHERE cards=?", [request.form['cards']])
+    db.commit()
+    flash('Trade sent')
+    return redirect(url_for('trade_result'))
+
+@app.route('/trade', methods=['GET'])
+def checktrades():
+    """pulls in trade offers"""
+    db = get_db()
+    db.execute('INSERT INTO collection WHERE (cards,users) VALUES (?,?)',
+               [request.form['cards']])
+    db.commit()
+    flash('Trade pending')
+    return redirect(url_for('trade_request'))
+
+
+
+
+
+@app.route('/trade', methods=['POST'])
+def confirmtrade():
+    """gives user the ability to accept/decline trades"""
+    db = get_db()
+    trade = db.execute("SELECT cards  FROM collection WHERE card_id=?", [request.form['cards']])
+
+    if trade is None:
+        flash('No Trades')
+        return redirect(url_for('trade'))
+    else
+        trade = True
+        db.execute("UPDATE cards FROM collection WHERE card_id=?", [request.form['cards']])
+        flash('incorrect password')
+        return redirect(url_for('show_entries'))
+    else:
+        trade = False
+        flash('Trade Declined')
+        return redirect(url_for('trade_result'))
+
 
 
 #@app.route('/logout')

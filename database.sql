@@ -21,6 +21,9 @@ CREATE TABLE collection (
 );
 
 
+
+
+
 -- cards to be shown in the store table
 drop table if exists store;
 CREATE TABLE store (
