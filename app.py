@@ -104,7 +104,7 @@ def your_inventory():
 def marketplace():
     db = get_db()
 
-    cur = db.execute('SELECT * FROM cards')
+    cur = db.execute('SELECT * FROM cards WHERE card_id = 7 OR card_id = 82 OR card_id = 153')
     cards = cur.fetchall()
 
     return render_template('marketplace.html', cards=cards)
