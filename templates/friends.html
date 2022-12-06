@@ -11,9 +11,18 @@ this code is going to be inside the loop --->
         <div class="row">
             <div class="col">
                 <div class="input-group mb-3">
-                    <span class="input-group-text" id="basic-addon1">@</span>
-                    <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
-                    <button class="btn btn-outline-secondary" type="button" id="button-addon2">Search</button>
+
+                    <span class="input-group-text" id="basic-addon1">username</span>
+
+                    <form action="{{ url_for('add_friend') }}" method="post">
+                        <input name="new_friend" type="text" placeholder="Username">
+                        <input type="submit" value="Submit">
+                    </form>
+                    <!-- Commented out more stylized code to get basic functionality down, just for now
+                    <input type="text" class="form-control" placeholder="Username" aria-label="new_friend" aria-describedby="basic-addon1">
+                    <form type="submit" href="{{ url_for('add_friend') }}"class="btn btn-outline-secondary" id="button-addon2">Search</form>
+                    <a type="submit" class="btn btn-primary btn-lg" href="{{ url_for('add_friend') }}" role="button">add</a>
+                    -->
                 </div>
             </div>
         </div>
@@ -21,13 +30,6 @@ this code is going to be inside the loop --->
 
 <!---- Idea taken from categories code from Flaskr assignment --->
 <h2>Friends</h2>
-    <ul class="friends">
-        <li><a href="?">Friends</a></li>
-        {% for friend in friends %}
-            <li><a href="?friend={{ friend.friend }}">{{ friend.friend }}</a></li>
-        {% endfor %}
-    </ul>
-
 <table class="table">
   <thead>
     <tr>
@@ -36,36 +38,25 @@ this code is going to be inside the loop --->
       <th scope="col">Trade</th>
     </tr>
   </thead>
-  <tbody>
-    <tr>
-      <td>Garrett Swingler</td>
-      <td><a class="btn btn-primary btn-lg" href="{{ url_for('friend_inventory') }}" role="button">Collection</a></td>
-      <td>
-          <form action="{{ url_for('home') }}" method="post" class="trade-button">
-              <button type="button" class="btn btn-primary btn-lg">Trade</button>
-          </form>
-      </td>
-    </tr>
-    <tr>
-      <td>Dino Biggers</td>
-      <td><a class="btn btn-primary btn-lg" href="{{ url_for('friend_inventory') }}" role="button">Collection</a></td>
-      <td>
-          <form action="{{ url_for('home') }}" method="post" class="trade-button">
-              <button type="button" class="btn btn-primary btn-lg">Trade</button>
-          </form>
-      </td>
-    </tr>
-    <tr>
-      <td>Eric Torres</td>
-      <td><a class="btn btn-primary btn-lg" href="{{ url_for('friend_inventory') }}" role="button">Collection</a></td>
-      <td>
-          <form action="{{ url_for('home') }}" method="post" class="trade-button">
-              <button type="button" class="btn btn-primary btn-lg">Trade</button>
-          </form>
-      </td>
+    <ul class="friends">
+        <li><a href="{{ url_for('show_friends') }}">Friends List</a></li>
 
+        {% for friend in friend_list %}
+            <li>{{ friend }}</li>
+        <tbody>
+    <tr>
+      <td>{{friend}}</td>
+      <td><a class="btn btn-primary btn-lg" href="{{ url_for('friend_inventory') }}" role="button">Collection</a></td>
+      <td>
+          <form action="{{ url_for('home') }}" method="post" class="trade-button">
+              <button type="button" class="btn btn-primary btn-lg">Trade</button>
+          </form>
+      </td>
     </tr>
-  </tbody>
+        {% endfor %}
+        </tbody>
+
+    </ul>
 </table>
 
     <div class="container text-center">

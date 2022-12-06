@@ -23,20 +23,18 @@
         <div class="row">
             <div class="col">
                 <div class="card" style="width: 18rem;">
-                    <img src="..." class="card-img-top" alt="...">
                     <div class="card-body">
                         <h5 class="card-title">Pack</h5>
-                        <p class="card-text">Pack specifications</p>
-                        <a href="#" class="btn btn-primary">Buy</a>
+                        <p class="card-text">Pack to Pull Cards</p>
+                        <a href="{{ url_for('pull_cards') }}" class="btn btn-primary">Buy</a>
                     </div>
                 </div>
                 <div class="col">
                     <div class="card" style="width: 18rem;">
-                        <img src="..." class="card-img-top" alt="...">
                         <div class="card-body">
                             <h5 class="card-title">Pack</h5>
-                            <p class="card-text">Pack specifications</p>
-                            <a href="#" class="btn btn-primary">Buy</a>
+                            <p class="card-text">Pack with Random Cards</p>
+                            <a href="{{ url_for('pull_cards') }}" class="btn btn-primary">Buy</a>
                         </div>
                     </div>
                 </div>
@@ -54,49 +52,18 @@
         </thead>
         <tbody>
         <tr>
-            <td>Card</td>
-            <td>Price</td>
-            <td>
-                <form action="{{ url_for('your_inventory') }}" method="post" class="buy-button">
-                    <button type="button" class="btn btn-primary btn-lg">Buy</button>
-                </form>
-            </td>
-        </tr>
-        <tr>
-            <td>Card 2</td>
-            <td>Price</td>
-            <td>
-                <form action="{{ url_for('your_inventory') }}" method="post" class="buy-button">
-                    <button type="button" class="btn btn-primary btn-lg">Buy</button>
-                </form>
-            </td>
-        </tr>
-        <tr>
-            <td>Card 3</td>
-            <td>Price</td>
-            <td>
-                <form action="{{ url_for('your_inventory') }}" method="post" class="buy-button">
-                    <button type="button" class="btn btn-primary btn-lg">Buy</button>
-                </form>
-            </td>
-        </tr>
-        <tr>
-            <td>Card 4</td>
-            <td>Price</td>
-            <td>
-                <form action="{{ url_for('your_inventory') }}" method="post" class="buy-button">
-                    <button type="button" class="btn btn-primary btn-lg">Buy</button>
-                </form>
-            </td>
-        </tr>
-        <tr>
-            <td>Card 5</td>
-            <td>Price</td>
-            <td>
-                <form action="{{ url_for('your_inventory') }}" method="post" class="buy-button">
-                    <button type="button" class="btn btn-primary btn-lg">Buy</button>
-                </form>
-            </td>
+            <div class="container-fluid">
+                {% for card in cards %}
+                    <td>{{ card.name }}</td>
+                    <td>Price</td>
+                    <td>
+                        <form action="{{ url_for('buy_card') }}" method="post" class="add-button">
+                            <input type="hidden" name="id" value="{{ card.card_id }}" class="add-id">
+                            <input type="submit" class="btn btn-primary btn-lg" value="Buy">
+                        </form>
+                    </td>
+                {% endfor %}
+            </div>
         </tr>
         </tbody>
     </table>

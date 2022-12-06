@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block body %}
+<head>
+    <meta charset="UTF-8">
+    <title>Your Cards!</title>
+</head>
+<body>
+    <div class="container text-center">
+        Your Cards
+    </div>
+    {% for card in cards %}
+        <img src="{{ card }}" style="height:350px;">
+    {% endfor %}
+</body>
+
+<div class="container text-center">
+      <a class="btn btn-primary btn-lg" href="{{ url_for('home') }}" role="button">Home</a>
+</div>
+
+{% endblock %}
+</html>

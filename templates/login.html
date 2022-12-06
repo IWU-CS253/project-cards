@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
+{% extends "layout.html" %}
+{% block body %}
 <head>
     <meta charset="UTF-8">
     <title>Log In</title>
@@ -7,10 +9,13 @@
 <h1>Log In</h1>
 <body>
 <form action="{{ url_for('login') }}" method="POST">
-    <input class = 'form-control form-control-lg' type="text" name = "username" value = "username">
-    <input class = 'form-control form-control-lg' type="text" name = "password" value = "password">
+    <input class = 'form-control form-control-lg' type="text" name="username" placeholder="Username">
+    <input class = 'form-control form-control-lg' type="password" name="password" placeholder="Password">
     <input type = "Submit" value = "Log In">
 </form>
-<a href="{{url_for('new_user_info')}}">Create Account</a>
+<div class="container text-center">
+    <a class="btn btn-primary" href="{{ url_for('new_user_info') }}" role="button">Create Account</a>
+</div>
 </body>
 </html>
+{% endblock %}
