@@ -383,3 +383,50 @@ def sell_card():
     flash('Successfully sold a card')
     db.commit()
     return redirect(url_for('your_inventory'))
+
+
+@app.route('/starter_collection', methods=['GET'])
+def starter_collection():
+    db = get_db()
+    cur = db.execute('SELECT * FROM collection WHERE EXISTS(SELECT delete_id WHERE card_id=? AND user_id=?)',
+                     [7, session['current_user']])
+    cheese = cur.fetchone()
+    cur = db.execute('SELECT * FROM collection WHERE EXISTS(SELECT delete_id WHERE card_id=? AND user_id=?)',
+                     [12, session['current_user']])
+    taco = cur.fetchone()
+    cur = db.execute('SELECT * FROM collection WHERE EXISTS(SELECT delete_id WHERE card_id=? AND user_id=?)',
+                     [53, session['current_user']])
+    cat = cur.fetchone()
+    if cheese is None or taco is None or cat is None:
+        flash('you do not have all the cards required for this collection, bozo')
+        return redirect(url_for('collections'))
+    else:
+        db.execute('DELETE FROM collection WHERE delete_id=?', [cheese[0]])
+        db.execute('DELETE FROM collection WHERE delete_id=?', [taco[0]])
+        db.execute('DELETE FROM collection WHERE delete_id=?', [cat[0]])
+        sell(500)
+        db.commit()
+        flash('You turned in Cheese, Taco, and Cat for 500 points')
+        return redirect(url_for('collections'))
+
+
+@app.route('/body_collection', methods=['GET'])
+def body_collection():
+    db = get_db()
+    cur = db.execute('SELECT * FROM collection WHERE EXISTS(SELECT delete_id WHERE card_id=? AND user_id=?)',
+                     [161, session['current_user']])
+    belly = cur.fetchone()
+    cur = db.execute('SELECT * FROM collection WHERE EXISTS(SELECT delete_id WHERE card_id=? AND user_id=?)',
+                     [198, session['current_user']])
+    brain = cur.fetchone()
+    if belly is None or brain is None:
+        flash('you do not have all the cards required for this collection, bozo')
+        return redirect(url_for('collections'))
+    else:
+        db.execute('DELETE FROM collection WHERE delete_id=?', [belly[0]])
+        db.execute('DELETE FROM collection WHERE delete_id=?', [brain[0]])
+        sell(250)
+        db.commit()
+        flash('You turned in Belly and Brain in exchange for 250 points')
+        return redirect(url_for('collections'))
+    return redirect(url_for('collections'))
