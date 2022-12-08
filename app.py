@@ -135,6 +135,16 @@ def trade_result():
     return render_template('trade_result.html')
 
 
+@app.route('/transactions')
+def transactions():
+    db = get_db()
+
+    cur = db.execute('SELECT * FROM transactions')
+    transaction_history = cur.fetchall()
+
+    return render_template('transactions.html', transaction_history=transaction_history)
+
+
 @app.route('/wallet_balance', methods=['POST'])
 def wallet_balance():
     db = get_db()
@@ -319,7 +329,9 @@ def buy_card():
     if broke_check:
         return redirect(url_for('marketplace'))
     add_cards()
-
+    wallet_change = -1 * card_price
+    db.execute('INSERT INTO transactions(user_id, card_id, wallet_change) VALUES (?, ?, ?)',
+               [session['current_user'], card_id[0], wallet_change])
     flash('Successfully purchased a card')
     db.commit()
     return redirect(url_for('marketplace'))

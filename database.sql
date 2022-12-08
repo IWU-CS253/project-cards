@@ -51,7 +51,7 @@ CREATE TABLE friends (
 
 drop table if exists transactions;
 CREATE TABLE transactions (
-    user_id INT PRIMARY KEY,
+    user_id INT,
     card_id INT,
     wallet_change INT NOT NULL,
     FOREIGN KEY (card_id) REFERENCES cards,
