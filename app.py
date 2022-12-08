@@ -145,6 +145,11 @@ def transactions():
     return render_template('transactions.html', transaction_history=transaction_history)
 
 
+@app.route('/collections')
+def collections():
+    return render_template('collections.html')
+
+
 @app.route('/wallet_balance', methods=['POST'])
 def wallet_balance():
     db = get_db()
