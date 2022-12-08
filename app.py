@@ -429,4 +429,3 @@ def body_collection():
         db.commit()
         flash('You turned in Belly and Brain in exchange for 250 points')
         return redirect(url_for('collections'))
-    return redirect(url_for('collections'))
