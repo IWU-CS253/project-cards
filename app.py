@@ -373,7 +373,8 @@ def sell_card():
     delete_card = db.execute('DELETE FROM collection WHERE delete_id=?', delete_id)
     delete_card = delete_card.fetchone()
     sell(price)
-
+    db.execute('INSERT INTO transactions(user_id, card_id, wallet_change) VALUES (?, ?, ?)',
+               [session['current_user'], card_id[0], price])
     flash('Successfully sold a card')
     db.commit()
     return redirect(url_for('your_inventory'))
