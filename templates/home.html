@@ -27,10 +27,14 @@
             </div>
 
         <div class="col-4">
-            <a>Complete Collections</a>
+            <a href="{{ url_for('collections') }}">Complete Collections</a>
             <p>Apply the cards you own to unique sets to earn valuable rewards</p>
         </div>
     </div>
+    <div>
+        <a class="btn btn-primary" href="{{ url_for('transactions')}}" role="button">View transaction History</a>
+    </div>
+    <br>
     <div class="container text-center">
           <a class="btn btn-primary btn-lg" href="{{ url_for('logout') }}" role="button">Log Out</a>
     </div>

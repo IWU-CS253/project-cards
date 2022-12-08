@@ -55,13 +55,16 @@
             <div class="container-fluid">
                 {% for card in cards %}
                     <td>{{ card.name }}</td>
-                    <td>Price</td>
+                    <td>{{ card.price }}</td>
                     <td>
                         <form action="{{ url_for('buy_card') }}" method="post" class="add-button">
                             <input type="hidden" name="id" value="{{ card.card_id }}" class="add-id">
                             <input type="submit" class="btn btn-primary btn-lg" value="Buy">
                         </form>
-                    </td>
+                        <td>
+                        <td>
+                        </td>
+                        </tr>
                 {% endfor %}
             </div>
         </tr>

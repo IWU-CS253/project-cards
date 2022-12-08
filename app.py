@@ -104,7 +104,7 @@ def your_inventory():
 def marketplace():
     db = get_db()
 
-    cur = db.execute('SELECT * FROM cards')
+    cur = db.execute('SELECT * FROM cards WHERE card_id = 7 OR card_id = 82 OR card_id = 153')
     cards = cur.fetchall()
 
     return render_template('marketplace.html', cards=cards)
@@ -133,6 +133,21 @@ def trade_request():
 @app.route('/trade_result')
 def trade_result():
     return render_template('trade_result.html')
+
+
+@app.route('/transactions')
+def transactions():
+    db = get_db()
+
+    cur = db.execute('SELECT * FROM transactions')
+    transaction_history = cur.fetchall()
+
+    return render_template('transactions.html', transaction_history=transaction_history)
+
+
+@app.route('/collections')
+def collections():
+    return render_template('collections.html')
 
 
 @app.route('/wallet_balance', methods=['POST'])
@@ -319,7 +334,9 @@ def buy_card():
     if broke_check:
         return redirect(url_for('marketplace'))
     add_cards()
-
+    wallet_change = -1 * card_price
+    db.execute('INSERT INTO transactions(user_id, card_id, wallet_change) VALUES (?, ?, ?)',
+               [session['current_user'], card_id[0], wallet_change])
     flash('Successfully purchased a card')
     db.commit()
     return redirect(url_for('marketplace'))
@@ -361,7 +378,54 @@ def sell_card():
     delete_card = db.execute('DELETE FROM collection WHERE delete_id=?', delete_id)
     delete_card = delete_card.fetchone()
     sell(price)
-
+    db.execute('INSERT INTO transactions(user_id, card_id, wallet_change) VALUES (?, ?, ?)',
+               [session['current_user'], card_id[0], price])
     flash('Successfully sold a card')
     db.commit()
     return redirect(url_for('your_inventory'))
+
+
+@app.route('/starter_collection', methods=['GET'])
+def starter_collection():
+    db = get_db()
+    cur = db.execute('SELECT * FROM collection WHERE EXISTS(SELECT delete_id WHERE card_id=? AND user_id=?)',
+                     [7, session['current_user']])
+    cheese = cur.fetchone()
+    cur = db.execute('SELECT * FROM collection WHERE EXISTS(SELECT delete_id WHERE card_id=? AND user_id=?)',
+                     [12, session['current_user']])
+    taco = cur.fetchone()
+    cur = db.execute('SELECT * FROM collection WHERE EXISTS(SELECT delete_id WHERE card_id=? AND user_id=?)',
+                     [53, session['current_user']])
+    cat = cur.fetchone()
+    if cheese is None or taco is None or cat is None:
+        flash('you do not have all the cards required for this collection, bozo')
+        return redirect(url_for('collections'))
+    else:
+        db.execute('DELETE FROM collection WHERE delete_id=?', [cheese[0]])
+        db.execute('DELETE FROM collection WHERE delete_id=?', [taco[0]])
+        db.execute('DELETE FROM collection WHERE delete_id=?', [cat[0]])
+        sell(500)
+        db.commit()
+        flash('You turned in Cheese, Taco, and Cat for 500 points')
+        return redirect(url_for('collections'))
+
+
+@app.route('/body_collection', methods=['GET'])
+def body_collection():
+    db = get_db()
+    cur = db.execute('SELECT * FROM collection WHERE EXISTS(SELECT delete_id WHERE card_id=? AND user_id=?)',
+                     [161, session['current_user']])
+    belly = cur.fetchone()
+    cur = db.execute('SELECT * FROM collection WHERE EXISTS(SELECT delete_id WHERE card_id=? AND user_id=?)',
+                     [198, session['current_user']])
+    brain = cur.fetchone()
+    if belly is None or brain is None:
+        flash('you do not have all the cards required for this collection, bozo')
+        return redirect(url_for('collections'))
+    else:
+        db.execute('DELETE FROM collection WHERE delete_id=?', [belly[0]])
+        db.execute('DELETE FROM collection WHERE delete_id=?', [brain[0]])
+        sell(250)
+        db.commit()
+        flash('You turned in Belly and Brain in exchange for 250 points')
+        return redirect(url_for('collections'))
