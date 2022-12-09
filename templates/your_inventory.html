@@ -7,7 +7,7 @@
     <ul class="cards">
         <li><a href="?">[all]</a></li>
         {% for card in cards %}
-            <li><a href="?rank={{ card.rank }}">{{ card.rank }}</a></li>
+            <a class="btn btn-outline-secondary" href="?rank={{ card.rank }}">{{ card.rank }}</a>
         {% endfor %}
     </ul>
 
