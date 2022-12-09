@@ -92,10 +92,18 @@ def show_entries():
 def your_inventory():
     db = get_db()
 
+    if "rank" in request.args:
+        cur = db.execute('SELECT * FROM cards JOIN collection ON collection.card_id = cards.card_id '
+                         'WHERE collection.user_id=? AND cards.rank=?', [session['current_user'], request.args['rank']])
+        collection = cur.fetchall()
+
+    else:
+        cur = db.execute('SELECT * FROM cards JOIN collection ON collection.card_id = cards.card_id '
+                         'WHERE collection.user_id=?', [session['current_user']])
+        collection = cur.fetchall()
+
     cur = db.execute('SELECT DISTINCT rank FROM cards ORDER BY rank')
     cards = cur.fetchall()
-    cur = db.execute("SELECT * FROM cards JOIN collection ON collection.card_id = cards.card_id WHERE collection.user_id=?", [session['current_user']])
-    collection = cur.fetchall()
 
     return render_template('your_inventory.html', cards=cards, collection=collection)
 
@@ -267,7 +275,6 @@ def pull_cards():
         return redirect(url_for('marketplace'))
 
 
-
 @app.route('/add_friend', methods=['GET', 'POST'])
 def add_friend():
     db = get_db()
@@ -420,7 +427,7 @@ def body_collection():
                      [198, session['current_user']])
     brain = cur.fetchone()
     if belly is None or brain is None:
-        flash('you do not have all the cards required for this collection, bozo')
+        flash('You do not have all the cards required for this collection, bozo')
         return redirect(url_for('collections'))
     else:
         db.execute('DELETE FROM collection WHERE delete_id=?', [belly[0]])
