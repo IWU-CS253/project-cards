@@ -100,11 +100,12 @@ def your_inventory():
     return render_template('your_inventory.html', cards=cards, collection=collection)
 
 
+
 @app.route('/marketplace')
 def marketplace():
     db = get_db()
 
-    cur = db.execute('SELECT * FROM cards WHERE card_id = 7 OR card_id = 82 OR card_id = 153')
+    cur = db.execute('SELECT * FROM marketplace')
     cards = cur.fetchall()
 
     return render_template('marketplace.html', cards=cards)
@@ -253,13 +254,17 @@ def pull_cards():
             pull = choices(cid_list, ranks)
             ran_pull = db.execute('SELECT card_id FROM store WHERE card_id = ?', pull)
             card = ran_pull.fetchone()
-            db.execute('INSERT INTO collection(card_id, user_id) VALUES (?, ?)', [card[0], session['current_user']])
-            db.commit()
 
             img = db.execute('SELECT image FROM store WHERE card_id = ?', pull)
             img = img.fetchone()
+
+
+            db.execute('INSERT INTO collection(card_id, user_id, image) VALUES (?, ?,?)',
+                       [card[0], session['current_user'], img[0]])
+
             for row in img:
                 cards_img.append(row)
+            db.commit()
 
         return render_template('pull_cards.html', cards=cards_img)
 
@@ -291,10 +296,10 @@ def add_friend():
     return redirect(url_for('connect_with_friends'))
   
   
-@app.route('/add_cards', methods=['POST'])
-def add_cards():
+@app.route('/add_cards')
+def add_cards(market_id):
     db = get_db()
-    cur = db.execute('SELECT card_id FROM cards WHERE card_id=?', [request.form['id']])
+    cur = db.execute('SELECT card_id FROM marketplace WHERE market_id=?', market_id)
     card = cur.fetchone()
     db.execute('INSERT INTO collection(card_id, user_id) VALUES(?, ?)', [card[0], session['current_user']])
     db.commit()
@@ -320,23 +325,34 @@ def purchase(amount):
     return broke
 
 
-@app.route('/buy_cards', methods=['POST'])
+@app.route('/buy_card', methods=["POST"])
 def buy_card():
     # This function is used when purchasing an individual card: takes the id of the desired card as argument
     # and calls the purchase method with the card price to adjust the user wallet
     # Also inserts the card with corresponding id into the collection table
     db = get_db()
-    cur = db.execute('SELECT card_id FROM cards WHERE card_id=?', [request.form['id']])
-    card_id = cur.fetchone()
-    card_price = db.execute("SELECT price FROM store WHERE card_id=?", card_id)
+    card_id = request.form.get('card_id')
+    market_id = request.form.get('market_id')
+
+    card_price = db.execute("SELECT price FROM marketplace WHERE market_id=?", market_id)
     card_price = card_price.fetchone()[-1]
     broke_check = purchase(card_price)
     if broke_check:
         return redirect(url_for('marketplace'))
-    add_cards()
+    add_cards(market_id)
     wallet_change = -1 * card_price
     db.execute('INSERT INTO transactions(user_id, card_id, wallet_change) VALUES (?, ?, ?)',
                [session['current_user'], card_id[0], wallet_change])
+
+    wallet_change_out = card_price
+    user_id_out = db.execute('SELECT user_id FROM marketplace WHERE market_id=?', market_id)
+    user_id_out = user_id_out.fetchone()
+    sell(card_price, user_id_out)
+    db.execute('INSERT INTO transactions(user_id, card_id, wallet_change) VALUES (?, ?, ?)',
+               [user_id_out[0], card_id[0], wallet_change_out])
+
+    db.execute('DELETE FROM marketplace WHERE market_id=?', market_id)
+
     flash('Successfully purchased a card')
     db.commit()
     return redirect(url_for('marketplace'))
@@ -356,33 +372,52 @@ def show_friends():
 
 
 @app.route('/sell', methods=['GET'])
-def sell(amount):
+def sell(amount, user_id):
     db = get_db()
-    user_wallet = db.execute('SELECT wallet_balance FROM users WHERE user_id=?', [session['current_user']])
+    user_wallet = db.execute('SELECT wallet_balance FROM users WHERE user_id=?', user_id)
     user_wallet = user_wallet.fetchone()[-1]
     add_balance = (user_wallet + amount)
 
-    db.execute("UPDATE users SET wallet_balance=? WHERE user_id=?", [add_balance, session['current_user']])
+    db.execute('UPDATE users SET wallet_balance=? WHERE user_id=?', [add_balance, user_id[0]])
     db.commit()
 
 
 @app.route('/sell_card', methods=['POST'])
 def sell_card():
     db = get_db()
-    cur = db.execute('SELECT card_id FROM collection WHERE card_id=?', [request.form['id']])
-    card_id = cur.fetchone()
-    sell_price = db.execute('SELECT price FROM cards WHERE card_id=?', card_id)
-    price = sell_price.fetchone()[-1]
-    delete = db.execute('SELECT delete_id FROM collection WHERE delete_id=?', [request.form['delete_id']])
-    delete_id = delete.fetchone()
-    delete_card = db.execute('DELETE FROM collection WHERE delete_id=?', delete_id)
+    card_id = request.form.get('id')
+    price = request.form.get('choose_price')
+    name = request.form.get('name')
+    cur = db.execute('INSERT INTO marketplace(user_id, card_id, name, price) VALUES(?, ?, ?, ?)',
+                     [session['current_user'], card_id, name, price])
+
+    delete_id = request.form.get('delete_id')
+    delete_card = db.execute('DELETE FROM collection WHERE delete_id=?', [delete_id])
     delete_card = delete_card.fetchone()
-    sell(price)
-    db.execute('INSERT INTO transactions(user_id, card_id, wallet_change) VALUES (?, ?, ?)',
-               [session['current_user'], card_id[0], price])
-    flash('Successfully sold a card')
+
     db.commit()
     return redirect(url_for('your_inventory'))
+
+
+@app.route('/post_card', methods=["POST"])
+def post_card():
+    db = get_db()
+    card_id = request.form.get('id')
+    delete_id = request.form.get('delete_id')
+
+    cur = db.execute('SELECT image FROM collection WHERE card_id = ?', [card_id])
+    image = cur.fetchone()
+    card_image = []
+    for row in image:
+        card_image.append(row)
+
+    cur = db.execute('SELECT name FROM cards JOIN collection ON cards.card_id = ?', [card_id])
+    name = cur.fetchone()
+    card_name = []
+    for row in name:
+        card_name.append(row)
+
+    return render_template('post_card.html', cardimage=card_image, cardname=card_name, id=card_id, delete_id=delete_id)
 
 
 @app.route('/starter_collection', methods=['GET'])
@@ -404,7 +439,7 @@ def starter_collection():
         db.execute('DELETE FROM collection WHERE delete_id=?', [cheese[0]])
         db.execute('DELETE FROM collection WHERE delete_id=?', [taco[0]])
         db.execute('DELETE FROM collection WHERE delete_id=?', [cat[0]])
-        sell(500)
+        sell(500, session['current_user'])
         db.commit()
         flash('You turned in Cheese, Taco, and Cat for 500 points')
         return redirect(url_for('collections'))
@@ -425,7 +460,7 @@ def body_collection():
     else:
         db.execute('DELETE FROM collection WHERE delete_id=?', [belly[0]])
         db.execute('DELETE FROM collection WHERE delete_id=?', [brain[0]])
-        sell(250)
+        sell(250, session['current_user'])
         db.commit()
         flash('You turned in Belly and Brain in exchange for 250 points')
         return redirect(url_for('collections'))
