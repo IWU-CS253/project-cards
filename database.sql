@@ -2,7 +2,7 @@
 drop table if exists cards;
 CREATE TABLE cards (
     card_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name VARCHAR(20),
+    name VARCHAR(100),
 
     -- 5 ranks in increasing rarity
     rank INT,
@@ -17,8 +17,10 @@ CREATE TABLE collection (
     delete_id INTEGER PRIMARY KEY AUTOINCREMENT,
     card_id INT,
     user_id INT,
+    image VARCHAR(150),
     FOREIGN KEY (card_id) REFERENCES cards,
-    FOREIGN KEY (user_id) REFERENCES users
+    FOREIGN KEY (user_id) REFERENCES users,
+    FOREIGN KEY (image) REFERENCES store
 );
 
 
@@ -56,4 +58,16 @@ CREATE TABLE transactions (
     wallet_change INT NOT NULL,
     FOREIGN KEY (card_id) REFERENCES cards,
     FOREIGN KEY (user_id) REFERENCES users
+);
+
+drop table if exists marketplace;
+CREATE TABLE marketplace (
+    market_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INT,
+    card_id INT,
+    name VARCHAR(100),
+    price INT,
+    FOREIGN KEY (card_id) REFERENCES cards,
+    FOREIGN KEY (user_id) REFERENCES users,
+    FOREIGN KEY (name) REFERENCES cards
 );

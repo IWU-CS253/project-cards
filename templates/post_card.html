@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{% block body %}
+
+
+<h1>Sell Card</h1>
+
+    <div class="container text-center">
+    {% for image in cardimage %}
+        <img src="{{ image }}" style="height:350px;">
+    {% endfor %}
+    </div>
+
+
+<div class="container text-center">
+    {% for name in cardname %}
+    <h2>{{ name }}</h2>
+    {% endfor %}
+</div>
+
+    <form action="{{ url_for('sell_card') }}" method="post">
+        <input class = 'form-control form-control-lg' type="number" name = "choose_price" placeholder ="How much do you want to sell this card for?">
+        <input type="hidden" name="id" value="{{ id }}" class="add-id">
+        <input type="hidden" name="delete_id" value="{{ delete_id }}" class="add-id">
+        <input type="submit" class="btn btn-primary btn-lg" value="Submit">
+        {% for name in cardname %}
+        <input type = "hidden" name="name" value="{{ name }}" class="add-id">
+        {% endfor %}
+        </div>
+    </form>
+
+    <div class="container text-left">
+      <a class="btn btn-primary btn-lg" href="{{ url_for('your_inventory') }}" role="button">Back</a>
+    </div>
+
+
+{% endblock %}

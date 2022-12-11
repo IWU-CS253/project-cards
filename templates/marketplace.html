@@ -58,7 +58,8 @@
                     <td>{{ card.price }}</td>
                     <td>
                         <form action="{{ url_for('buy_card') }}" method="post" class="add-button">
-                            <input type="hidden" name="id" value="{{ card.card_id }}" class="add-id">
+                            <input type="hidden" name="market_id" value="{{ card.market_id }}" class="add-id">
+                            <input type="hidden" name="card_id" value="{{ card.card_id }}" class="add-id">
                             <input type="submit" class="btn btn-primary btn-lg" value="Buy">
                         </form>
                         <td>
