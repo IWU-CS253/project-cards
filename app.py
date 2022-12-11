@@ -206,7 +206,7 @@ def create_user():
     if email_exists_check:
         flash('email already taken')
         return redirect(url_for('new_user_info'))
-    db.execute('insert into users (username, password, email, wallet_baLance) values (?, ?, ?, 500)',
+    db.execute('insert into users (username, password, email, wallet_baLance) values (?, ?, ?, 1000)',
                [chosen_username, hashed_pw, chosen_email])
     db.commit()
     return render_template('login.html')
