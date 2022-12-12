@@ -54,9 +54,7 @@ this code is going to be inside the loop --->
       <td>{{friend}}</td>
       <td><a class="btn btn-primary btn-lg" href="{{ url_for('friend_inventory') }}" role="button">Collection</a></td>
       <td>
-          <form action="{{ url_for('home') }}" method="post" class="trade-button">
-              <button type="button" class="btn btn-primary btn-lg">Trade</button>
-          </form>
+          <a class="btn btn-primary btn-lg" href="{{ url_for('trade') }}" role="button">Trade</a>
       </td>
     </tr>
         {% endfor %}
