@@ -1,6 +1,8 @@
 <!---- Used Bootstrap page to help with syntax
 (source: https://getbootstrap.com/docs/5.2/getting-started/introduction/) --->
 
+<button style="float:right" class="btn btn-primary btn-lg" href="{{ url_for('home') }}">Home</button>
+
 {% extends "layout.html" %}
 {% block body %}
 <!---- We will need to loop through the users in the friends list,
@@ -58,9 +60,5 @@ this code is going to be inside the loop --->
 
     </ul>
 </table>
-
-    <div class="container text-center">
-          <a class="btn btn-primary btn-lg" href="{{ url_for('home') }}" role="button">Home</a>
-    </div>
 
 {% endblock %}

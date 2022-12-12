@@ -1,3 +1,5 @@
+<button style="float:right" class="btn btn-primary btn-lg" href="{{ url_for('home') }}">Home</button>
+
 {% extends "layout.html" %}
 {% block body %}
 <head>
@@ -12,10 +14,6 @@
         <img src="{{ card }}" style="height:350px;">
     {% endfor %}
 </body>
-
-<div class="container text-center">
-      <a class="btn btn-primary btn-lg" href="{{ url_for('home') }}" role="button">Home</a>
-</div>
 
 {% endblock %}
 </html>
