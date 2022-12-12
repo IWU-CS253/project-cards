@@ -6,31 +6,16 @@
     <a class="btn btn-primary btn-lg" href="{{ url_for('home') }}" role="button">Home</a>
 </div>
 
-<div class="container text-center">
-    <h1>Marketplace</h1>
-</div>
+<h1>Marketplace</h1>
 
     <div class="container text-center">
-        <div class="row justify-content-start">
-            <dl>
-                <div class="col-12">
-                    <dt>Search Marketplace:
-                    <dd><input class='form-control form-control-lg' type="text" size="30" name="market search">
-                </div>
-            </dl>
-        </div>
-        <div class="col-12">
-            <button class="btn btn-primary" type="submit">Search</button>
-        </div>
-    </div>
-
-    <div class="container text-center">
+        <h2>Packs</h2>
         <div class="row">
             <div class="col">
                 <div class="card" style="width: 24rem;">
                     <div class="card-body">
-                        <h5 class="card-title">Pack 1</h5>
-                        <p class="card-text">Pack with Pull Cards</p>
+                        <h5 class="card-title">Mix Pack 1</h5>
+                        <p class="card-text">Pack with Random Cards</p>
                         <a href="{{ url_for('pull_cards') }}" class="btn btn-primary">Buy</a>
                     </div>
                 </div>
@@ -40,13 +25,18 @@
             <div class="col">
                 <div class="card" style="width: 24rem;">
                     <div class="card-body">
-                        <h5 class="card-title">Pack 2</h5>
+                        <h5 class="card-title">Mix Pack 2</h5>
                         <p class="card-text">Pack with Random Cards</p>
                         <a href="{{ url_for('pull_cards') }}" class="btn btn-primary">Buy</a>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+
+    <div class="container text-center">
+        <h3>Listed Cards</h3>
+        <h4>Purchase user listed cards to add to your collection!</h4>
     </div>
 
     <table class="table">
