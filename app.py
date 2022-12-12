@@ -195,7 +195,7 @@ def create_user():
     user_exists = db.execute("SELECT password FROM users WHERE username=?", [chosen_username])
     user_exists_check = user_exists.fetchone()
     if user_exists_check:
-        flash('username already taken')
+        flash('Username already taken')
         return redirect(url_for('new_user_info'))
 
     hashed_pw = werkzeug.security.generate_password_hash(request.form['choose_password'], method='pbkdf2:sha256',
@@ -204,7 +204,7 @@ def create_user():
     email_exists = db.execute("SELECT password FROM users WHERE email=?", [chosen_email])
     email_exists_check = email_exists.fetchone()
     if email_exists_check:
-        flash('email already taken')
+        flash('Email already taken')
         return redirect(url_for('new_user_info'))
     db.execute('insert into users (username, password, email, wallet_baLance) values (?, ?, ?, 1000)',
                [chosen_username, hashed_pw, chosen_email])
@@ -219,11 +219,11 @@ def login():
     pswd = db.execute("SELECT password FROM users WHERE username=?", [request.form['username']])
     pw_check = pswd.fetchone()
     if pw_check is None:
-        flash('invalid username')
+        flash('Invalid username')
         return redirect(url_for('show_entries'))
     if not werkzeug.security.check_password_hash(pw_check['password'], request.form['password']):
         error = 'Invalid password'
-        flash('incorrect password')
+        flash('Incorrect password')
         return redirect(url_for('show_entries'))
     else:
         session['logged_in'] = True
@@ -282,7 +282,7 @@ def add_friend():
     friend_id = db.execute("SELECT user_id FROM users WHERE username=?", [added_friend]).fetchone()
     #friend_id = friend_id[0]
     if friend_id is None:
-        flash('user does not exist')
+        flash('User does not exist')
         return redirect(url_for('connect_with_friends'))
     friend_id = friend_id[0]
     already_friend = db.execute("SELECT * FROM friends WHERE user1_id=? AND user2_id=?", [session['current_user'],
@@ -292,7 +292,7 @@ def add_friend():
     #     flash('this action has already been taken')
     #     return redirect(url_for('connect_with_friends'))
 
-    flash('added friend, have them add you as well to become friends')
+    flash('Added friend, have them add you as well to become friends')
     db.execute('INSERT INTO friends (user1_id, user2_id)VALUES (?, ?)', [session['current_user'], friend_id])
     db.commit()
     return redirect(url_for('connect_with_friends'))
@@ -319,7 +319,7 @@ def purchase(amount):
     user_wallet = user_wallet.fetchone()[-1]
     new_balance = (user_wallet - amount)
     if new_balance < 0:
-        flash('insufficient funds: get ya money up')
+        flash('Insufficient funds: get ya money up')
         broke = True
         return broke
     db.execute("UPDATE users SET wallet_balance=? WHERE user_id=?", [new_balance, session['current_user']])
@@ -405,7 +405,7 @@ def starter_collection():
                      [53, session['current_user']])
     cat = cur.fetchone()
     if cheese is None or taco is None or cat is None:
-        flash('you do not have all the cards required for this collection, bozo')
+        flash('You do not have all the cards required for this collection, bozo')
         return redirect(url_for('collections'))
     else:
         db.execute('DELETE FROM collection WHERE delete_id=?', [cheese[0]])
