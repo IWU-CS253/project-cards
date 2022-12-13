@@ -1,17 +1,22 @@
 {% extends "layout.html" %}
 {% block body %}
 
+<!----Used Boostrap page to help with position--->
+<div style="position: absolute; top: 0; right: 0; width: 100px; text-align:right;">
+    <a class="btn btn-primary btn-lg" href="{{ url_for('home') }}" role="button">Home</a>
+</div>
+
 <!----Filter user cards by rarity--->
 <h1>Card Filter</h1>
     <h2>Filter cards by rarity!</h2>
     <ul class="cards">
         <li><a href="?">[all]</a></li>
         {% for card in cards %}
-            <li><a href="?rank={{ card.rank }}">{{ card.rank }}</a></li>
+            <a class="btn btn-outline-secondary" href="?rank={{ card.rank }}">{{ card.rank }}</a>
         {% endfor %}
     </ul>
 
-<!----We will need to loop through the cards in the user collection,
+<!---We will need to loop through the cards in the user collection,
 the same way we looped through entries to our flaskr website:
 this code is going to be inside the loop--->
 
@@ -35,15 +40,12 @@ this code is going to be inside the loop--->
                         </div>
                     </div>
                 </div>
-              </div>
             </div>
+        </div>
+
     {% else %}
         <em>No cards in your collection!</em>
     {% endfor %}
   </ul>
-
-    <div class="container text-center">
-          <a class="btn btn-primary btn-lg" href="{{ url_for('home') }}" role="button">Home</a>
-    </div>
 
 {% endblock %}
