@@ -49,16 +49,19 @@ this code is going to be inside the loop --->
 
         {% for friend in friend_list %}
             <li>{{ friend }}</li>
-        <tbody>
-    <tr>
-      <td>{{friend}}</td>
-      <td><a class="btn btn-primary btn-lg" href="{{ url_for('friend_inventory') }}" role="button">Collection</a></td>
-      <td>
-          <a class="btn btn-primary btn-lg" href="{{ url_for('trade') }}" role="button">Trade</a>
-      </td>
-    </tr>
         {% endfor %}
+        <tbody>
+
+        {% for friend in friend_list %}
+        <tr>
+            <td>{{friend}}</td>
+            <td><a class="btn btn-primary btn-lg" href="{{ url_for('friend_inventory') }}" role="button">Collection</a></td>
+            <td>
+                <a class="btn btn-primary btn-lg" href="{{ url_for('trade') }}" role="button">Trade</a>
+            </td>
+        </tr>
         </tbody>
+        {% endfor %}
 
     </ul>
 </table>
