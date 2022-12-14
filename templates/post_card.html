@@ -21,15 +21,17 @@
         <input class = 'form-control form-control-lg' type="number" name = "choose_price" placeholder ="How much do you want to sell this card for?">
         <input type="hidden" name="id" value="{{ id }}" class="add-id">
         <input type="hidden" name="delete_id" value="{{ delete_id }}" class="add-id">
-        <input type="submit" class="btn btn-primary btn-lg" value="Submit">
+        <div>
+            <input type="submit" class="btn btn-primary btn-lg" value="Submit">
+        </div>
         {% for name in cardname %}
         <input type = "hidden" name="name" value="{{ name }}" class="add-id">
         {% endfor %}
         </div>
     </form>
 
-    <div class="container text-left">
-      <a class="btn btn-primary btn-lg" href="{{ url_for('your_inventory') }}" role="button">Back</a>
+    <div style="position: absolute; top: 0; right: 0; width: 100px; text-align:right;">
+        <a class="btn btn-primary btn-lg" href="{{ url_for('your_inventory') }}" role="button">Back</a>
     </div>
 
 
