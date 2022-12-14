@@ -12,22 +12,86 @@
         <h2>Packs</h2>
         <div class="row">
             <div class="col">
-                <div class="card" style="width: 24rem;">
+                <div class="card" style="width: 18rem;">
                     <div class="card-body">
                         <h5 class="card-title">Mix Pack 1</h5>
                         <p class="card-text">Pack with Random Cards</p>
-                        <a href="{{ url_for('pull_cards') }}" class="btn btn-primary">Buy</a>
+                        <form action="{{ url_for('pull_cards') }}" method="POST">
+                            <input type="hidden" name="pack" value="pack1" class="add-id">
+                            <input type="submit" class="btn btn-primary" value="Buy">
+                        </form>
                     </div>
                 </div>
             </div>
             <div class="col">
-            </div>
-            <div class="col">
-                <div class="card" style="width: 24rem;">
+                <div class="card" style="width: 18rem;">
                     <div class="card-body">
                         <h5 class="card-title">Mix Pack 2</h5>
                         <p class="card-text">Pack with Random Cards</p>
-                        <a href="{{ url_for('pull_cards') }}" class="btn btn-primary">Buy</a>
+                        <form action="{{ url_for('pull_cards') }}" method="POST">
+                            <input type="hidden" name="pack" value="pack2" class="add-id">
+                            <input type="submit" class="btn btn-primary" value="Buy">
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">Mix Pack 3</h5>
+                        <p class="card-text">Pack with Random Cards</p>
+                        <form action="{{ url_for('pull_cards') }}" method="POST">
+                            <input type="hidden" name="pack" value="pack3" class="add-id">
+                            <input type="submit" class="btn btn-primary" value="Buy">
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">Mix Pack 4</h5>
+                        <p class="card-text">Pack with Random Cards</p>
+                        <form action="{{ url_for('pull_cards') }}" method="POST">
+                            <input type="hidden" name="pack" value="pack4" class="add-id">
+                            <input type="submit" class="btn btn-primary" value="Buy">
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">Mix Pack 5</h5>
+                        <p class="card-text">Pack with Random Cards</p>
+                        <form action="{{ url_for('pull_cards') }}" method="POST">
+                            <input type="hidden" name="pack" value="pack5" class="add-id">
+                            <input type="submit" class="btn btn-primary" value="Buy">
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">Mix Pack 6</h5>
+                        <p class="card-text">Pack with Random Cards</p>
+                        <form action="{{ url_for('pull_cards') }}" method="POST">
+                            <input type="hidden" name="pack" value="pack6" class="add-id">
+                            <input type="submit" class="btn btn-primary" value="Buy">
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">Mix Pack 7</h5>
+                        <p class="card-text">Pack with Random Cards</p>
+                        <form action="{{ url_for('pull_cards') }}" method="POST">
+                            <input type="hidden" name="pack" value="pack7" class="add-id">
+                            <input type="submit" class="btn btn-primary" value="Buy">
+                        </form>
                     </div>
                 </div>
             </div>
@@ -59,10 +123,9 @@
                             <input type="hidden" name="card_id" value="{{ card.card_id }}" class="add-id">
                             <input type="submit" class="btn btn-primary btn-lg" value="Buy">
                         </form>
-                    <td>
-                    <td>
                     </td>
-                    </tr>
+                    </td>
+                    </td>
                 {% endfor %}
             </div>
         </tr>

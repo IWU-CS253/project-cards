@@ -35,12 +35,12 @@ def init_db():
     database = os.path.join(app.root_path, 'projectcards.db')
     connection = sqlite3.connect(database)
     cursor = connection.cursor()
-    file = os.path.join(app.root_path, 'cards_csv/mix_pack1.csv')
+    file = os.path.join(app.root_path, 'cards_csv/mix_packs.csv')
     contents = csv.reader(open(file))
-    insert_records = "INSERT INTO store (card_id, rank, image, pack, price) VALUES(?, ?, ?, ?, ?);"
+    insert_records = "INSERT INTO store (card_id, rank, image, pack1, pack2, pack3, pack4, pack5, pack6, pack7) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
     cursor.executemany(insert_records, contents)
     file_cards = os.path.join(app.root_path, 'cards_csv/all_cards.csv')
-    insert_cards = "INSERT INTO cards (card_id, name, rank, price) VALUES (?, ?, ?, ?);"
+    insert_cards = "INSERT INTO cards (card_id, name, rank) VALUES (?, ?, ?);"
     contents_cards = csv.reader(open(file_cards))
     cursor.executemany(insert_cards, contents_cards)
     connection.commit()
@@ -242,17 +242,21 @@ def logout():
     return redirect(url_for('show_entries'))
      
 
-@app.route('/pull_cards')
+@app.route('/pull_cards', methods=["POST"])
 def pull_cards():
-    """Adds 5 cards to collections table from the total cards table using rank
+    """Adds 5 cards to collections table from the store table using rank
             to determine the probability of pulling each card"""
     if not purchase(250):
         db = get_db()
+        pack = request.form.get('pack')
 
         # create a list of weights for use in random's choice method
-        card_weight = db.execute('SELECT rank FROM store')
+        query = "SELECT rank FROM store WHERE {} = 'TRUE'".format(pack)
+        card_weight = db.execute(query)
         ranks = [float(rank[0]) for rank in card_weight.fetchall()]
-        card_population = db.execute('SELECT card_id FROM store')
+
+        query = "SELECT card_id FROM store WHERE {} = 'TRUE'".format(pack)
+        card_population = db.execute(query)
         cid_list = [card_id[0] for card_id in card_population.fetchall()]
 
         cards_img = []
@@ -260,14 +264,15 @@ def pull_cards():
         # pull 5 cards from the cards table and inserts the card to the collection table
         for i in range(5):
             pull = choices(cid_list, ranks)
-            ran_pull = db.execute('SELECT card_id FROM store WHERE card_id = ?', pull)
+            query = "SELECT card_id FROM store WHERE {} = 'TRUE' AND card_id = ?".format(pack)
+            ran_pull = db.execute(query, pull)
             card = ran_pull.fetchone()
 
-            img = db.execute('SELECT image FROM store WHERE card_id = ?', pull)
+            query = "SELECT image FROM store WHERE {} = 'TRUE' AND card_id = ?".format(pack)
+            img = db.execute(query, pull)
             img = img.fetchone()
 
-
-            db.execute('INSERT INTO collection(card_id, user_id, image) VALUES (?, ?,?)',
+            db.execute('INSERT INTO collection(card_id, user_id, image) VALUES (?, ?, ?)',
                        [card[0], session['current_user'], img[0]])
 
             for row in img:

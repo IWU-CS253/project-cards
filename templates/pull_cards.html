@@ -15,8 +15,12 @@
         Your Cards
     </div>
     {% for card in cards %}
-        <img src="{{ card }}" style="height:350px;">
+        <img src="static/{{ card }}" style="height:350px;">
     {% endfor %}
+
+    <div class="container text-center">
+        <a class="btn btn-primary btn-lg" href="{{ url_for('marketplace') }}" role="button">Back</a>
+    </div>
 </body>
 
 {% endblock %}

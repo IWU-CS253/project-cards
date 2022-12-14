@@ -5,8 +5,7 @@ CREATE TABLE cards (
     name VARCHAR(100),
 
     -- 5 ranks in increasing rarity
-    rank INT,
-    price INT
+    rank INT
 );
 
 
@@ -30,8 +29,13 @@ CREATE TABLE store (
     card_id INT,
     rank VARCHAR(10),
     image VARCHAR(150),
-    pack VARCHAR(10),
-    price INT
+    pack1 BOOL,
+    pack2 BOOL,
+    pack3 BOOL,
+    pack4 BOOL,
+    pack5 BOOL,
+    pack6 BOOL,
+    pack7 BOOL
 );
 
 drop table if exists users;
