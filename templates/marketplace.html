@@ -59,49 +59,51 @@
                     </div>
                 </div>
             </div>
-            <div class="col">
-                <div class="card" style="width: 18rem;">
-                    <div class="card-body">
-                        <h5 class="card-title">Mix Pack 5</h5>
-                        <p class="card-text">Pack with Random Cards</p>
-                        <form action="{{ url_for('pull_cards') }}" method="POST">
-                            <input type="hidden" name="pack" value="pack5" class="add-id">
-                            <input type="submit" class="btn btn-primary" value="Buy">
-                        </form>
+            <div class="row">
+                <div class="col">
+                    <div class="card" style="width: 18rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">Mix Pack 5</h5>
+                            <p class="card-text">Pack with Random Cards</p>
+                            <form action="{{ url_for('pull_cards') }}" method="POST">
+                                <input type="hidden" name="pack" value="pack5" class="add-id">
+                                <input type="submit" class="btn btn-primary" value="Buy">
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col">
-                <div class="card" style="width: 18rem;">
-                    <div class="card-body">
-                        <h5 class="card-title">Mix Pack 6</h5>
-                        <p class="card-text">Pack with Random Cards</p>
-                        <form action="{{ url_for('pull_cards') }}" method="POST">
-                            <input type="hidden" name="pack" value="pack6" class="add-id">
-                            <input type="submit" class="btn btn-primary" value="Buy">
-                        </form>
+                <div class="col">
+                    <div class="card" style="width: 18rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">Mix Pack 6</h5>
+                            <p class="card-text">Pack with Random Cards</p>
+                            <form action="{{ url_for('pull_cards') }}" method="POST">
+                                <input type="hidden" name="pack" value="pack6" class="add-id">
+                                <input type="submit" class="btn btn-primary" value="Buy">
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col">
-                <div class="card" style="width: 18rem;">
-                    <div class="card-body">
-                        <h5 class="card-title">Mix Pack 7</h5>
-                        <p class="card-text">Pack with Random Cards</p>
-                        <form action="{{ url_for('pull_cards') }}" method="POST">
-                            <input type="hidden" name="pack" value="pack7" class="add-id">
-                            <input type="submit" class="btn btn-primary" value="Buy">
-                        </form>
+                <div class="col">
+                    <div class="card" style="width: 18rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">Mix Pack 7</h5>
+                            <p class="card-text">Pack with Random Cards</p>
+                            <form action="{{ url_for('pull_cards') }}" method="POST">
+                                <input type="hidden" name="pack" value="pack7" class="add-id">
+                                <input type="submit" class="btn btn-primary" value="Buy">
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="container text-center">
-        <h3>Listed Cards</h3>
-        <h4>Purchase user listed cards to add to your collection!</h4>
-    </div>
+
+    <h3>Listed Cards</h3>
+    <h4>Purchase user listed cards to add to your collection!</h4>
+
 
     <table class="table">
         <thead>
