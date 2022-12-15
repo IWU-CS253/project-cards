@@ -93,12 +93,12 @@ def your_inventory():
     db = get_db()
 
     if "rank" in request.args:
-        cur = db.execute('SELECT * FROM cards JOIN collection ON collection.card_id = cards.card_id '
+        cur = db.execute('SELECT * FROM collection JOIN cards ON collection.card_id = cards.card_id '
                          'WHERE collection.user_id=? AND cards.rank=?', [session['current_user'], request.args['rank']])
         collection = cur.fetchall()
 
     else:
-        cur = db.execute('SELECT * FROM cards JOIN collection ON collection.card_id = cards.card_id '
+        cur = db.execute('SELECT * FROM collection JOIN cards ON collection.card_id = cards.card_id '
                          'WHERE collection.user_id=?', [session['current_user']])
         collection = cur.fetchall()
 
@@ -476,3 +476,16 @@ def body_collection():
         db.commit()
         flash('You turned in Belly and Brain in exchange for 250 points')
         return redirect(url_for('collections'))
+
+
+@app.route('/view_cards', methods=["POST"])
+def view_cards():
+    db = get_db()
+    pack = request.form.get('pack')
+    query = "SELECT image FROM store WHERE {} = 'TRUE' ORDER BY rank DESC".format(pack)
+    images = db.execute(query)
+    cards = [images[0] for images in images.fetchall()]
+
+    return render_template('view_cards.html', cards=cards)
+
+
