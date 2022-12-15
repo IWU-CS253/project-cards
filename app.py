@@ -116,7 +116,10 @@ def marketplace():
     cur = db.execute('SELECT * FROM marketplace')
     cards = cur.fetchall()
 
-    return render_template('marketplace.html', cards=cards)
+    cur = db.execute('SELECT wallet_balance FROM users WHERE user_id=?', [session['current_user']])
+    wallet = cur.fetchone()
+
+    return render_template('marketplace.html', cards=cards, wallet=wallet)
 
 
 @app.route('/connect_with_friends')

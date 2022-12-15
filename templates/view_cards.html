@@ -1,13 +1,9 @@
 {% extends "layout.html" %}
 {% block body %}
 
-    <div class="container text-center">
-        <a class="btn btn-primary btn-lg" href="{{ url_for('marketplace') }}" role="button">Back</a>
-    </div>
-
     <!----Used Boostrap page to help with position--->
 <div style="position: absolute; top: 0; right: 0; width: 100px; text-align:right;">
-    <a class="btn btn-primary btn-lg" href="{{ url_for('home') }}" role="button">Home</a>
+    <a class="btn btn-primary btn-lg" href="{{ url_for('marketplace') }}" role="button">Back</a>
 </div>
 
 {% for card in cards %}
