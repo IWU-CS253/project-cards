@@ -124,10 +124,36 @@ def friend_inventory():
 def trade():
     return render_template('trade.html')
 
+"""
+Get access to datatbase
+pull specific user id
+pull that specific user's cards from database.
+pass them into template.
 
-@app.route('/trade_request')
+
+"""
+@app.route('/trade_request',methods=['GET'])
 def trade_request():
-    return render_template('trade_request.html')
+    db = get_db()
+    user = request.args['username']
+    user_cur = db.execute("""SELECT users.user_id,collection.card_id,store.rank,store.price,store.image,name
+                                FROM users
+                              JOIN collection
+                                ON users.user_id = collection.user_id
+                              JOIN cards 
+                                ON cards.card_id= collection.card_id
+                              Join Store
+                                On cards.card_id= store.card_id
+                              WHERE users.username =?""",  [user])
+
+    user_inv = user_cur.fetchall()
+
+    return render_template('trade_request.html', deck=user_inv)
+
+
+
+
+  
 
 
 @app.route('/trade_result')
@@ -210,9 +236,11 @@ def login():
         return redirect(url_for('home'))
     return redirect(url_for('home'))
 
+
+"""
 @app.route('/trade', methods=['POST'])
 def sendtrade():
-    """updates ownership in database"""
+    updates ownership in database
     db = get_db()
     current_user = db.execute("UPDATE card_id FROM collection WHERE cards=?", [request.form['cards']])
     db.commit()
@@ -221,7 +249,7 @@ def sendtrade():
 
 @app.route('/trade', methods=['GET'])
 def checktrades():
-    """pulls in trade offers"""
+    pulls in trade offers
     db = get_db()
     db.execute('INSERT INTO collection WHERE (cards,users) VALUES (?,?)',
                [request.form['cards']])
@@ -235,14 +263,14 @@ def checktrades():
 
 @app.route('/trade', methods=['POST'])
 def confirmtrade():
-    """gives user the ability to accept/decline trades"""
+    gives user the ability to accept/decline trades
     db = get_db()
     trade = db.execute("SELECT cards  FROM collection WHERE card_id=?", [request.form['cards']])
 
     if trade is None:
         flash('No Trades')
         return redirect(url_for('trade'))
-    else
+    if not:
         trade = True
         db.execute("UPDATE cards FROM collection WHERE card_id=?", [request.form['cards']])
         flash('incorrect password')
@@ -252,7 +280,7 @@ def confirmtrade():
         flash('Trade Declined')
         return redirect(url_for('trade_result'))
 
-
+"""
 
 @app.route('/logout', methods=['GET'])
 def logout():

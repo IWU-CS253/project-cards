@@ -5,70 +5,51 @@
     <h2>Trade Submission</h2>
 
 
+<h3>You Receive:</h3>
+    {% for card in deck %}
+        <div class="container text-center">
 
-    <div class="container text-center">
-        <div class="row">
-            <div class="col">
-                <div class="card" style="width: 18rem;">
-                    <img src="..." class="card-img-top" alt="...">
-                    <div class="card-body"><h1>Card Name</h1>
-                        <div class="card-body"><h2>Card Rarity</h2>
-                            <button class="btn btn-primary" type="submit">Select Card</button>
+            <div class="row">
+                <div class="col">
+                    <div class="card" style="width: 18rem;">
+                        <img src="{{ card }}" style="height:350px;">
+                        <div class="card-body"><a>{{ card.name }}</a><br>
+                            <div class="card-body"><a>{{ card.rank }}</a><br>
+                                <p class="card-text"><a>Trading Cards</a>
+                                <form action="{{ url_for('trade_result') }}" method="post" class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="mySwitch" name="card_id" value=yes" checked>
+                                    <label class="mySwitch">Receive this Card?</label>
+                                </form>
+
+                            </div>
                         </div>
                     </div>
                 </div>
+              </div>
             </div>
-            <div class="col">
-                <div class="card" style="width: 18rem;">
-                    <img src="..." class="card-img-top" alt="...">
-                    <div class="card-body"><h1>Card Name</h1>
-                        <div class="card-body"><h2>Card Rarity</h2>
-                            <button class="btn btn-primary" type="submit">Select Card</button>
+    {% endfor %}
+    {% for card in collection %}
+          <div class="container text-center">
+
+            <div class="row">
+                <div class="col">
+                    <div class="card" style="width: 18rem;">
+                        <img src="{{ card }}" style="height:350px;">
+                        <div class="card-body"><a>{{ card.name }}</a><br>
+                            <div class="card-body"><a>{{ card.rank }}</a><br>
+                                <p class="card-text"><a>Trading Cards</a>
+                                <form action="{{ url_for('trade_result') }}" method="post" class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="mySwitch" name="card_id" value=yes" checked>
+                                    <label class="mySwitch">Offer this card:</label>
+                                </form>
+
+                            </div>
                         </div>
                     </div>
                 </div>
+              </div>
             </div>
-            <div class="col">
-                <div class="card" style="width: 18rem;">
-                    <img src="..." class="card-img-top" alt="...">
-                    <div class="card-body"><h1>Card Name</h1>
-                        <div class="card-body"><h2>Card Rarity</h2>
-                            <button class="btn btn-primary" type="submit">Select Card</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        <div class="row">
-            <div class="col">
-                <div class="card" style="width: 18rem;">
-                    <img src="..." class="card-img-top" alt="...">
-                    <div class="card-body"><h1>Card Name</h1>
-                        <div class="card-body"><h2>Card Rarity</h2>
-                            <button class="btn btn-primary" type="submit">Select Card</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card" style="width: 18rem;">
-                    <img src="..." class="card-img-top" alt="...">
-                    <div class="card-body"><h1>Card Name</h1>
-                        <div class="card-body"><h2>Card Rarity</h2>
-                            <button class="btn btn-primary" type="submit">Select Card</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card" style="width: 18rem;">
-                    <img src="..." class="card-img-top" alt="...">
-                    <div class="card-body"><h1>Card Name</h1>
-                        <div class="card-body"><h2>Card Rarity</h2>
-                            <button class="btn btn-primary" type="submit">Select Card</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    {% endfor %}
 
 
             <div class="container text-center">
