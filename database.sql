@@ -22,7 +22,6 @@ CREATE TABLE collection (
     FOREIGN KEY (image) REFERENCES store
 );
 
-
 -- cards to be shown in the store table
 drop table if exists store;
 CREATE TABLE store (
@@ -64,6 +63,19 @@ CREATE TABLE transactions (
     FOREIGN KEY (user_id) REFERENCES users
 );
 
+drop table if exists trades;
+CREATE TABLE trades (
+    trade_id INT,
+    request_id INT,
+    offer_id INT,
+    card_id INT,
+    delete_id INT,
+    FOREIGN KEY (card_id) REFERENCES cards,
+    FOREIGN KEY (offer_id) REFERENCES users,
+    FOREIGN KEY (request_id) REFERENCES users,
+    FOREIGN KEY (delete_id) REFERENCES collection
+);
+
 drop table if exists marketplace;
 CREATE TABLE marketplace (
     market_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -75,3 +87,4 @@ CREATE TABLE marketplace (
     FOREIGN KEY (user_id) REFERENCES users,
     FOREIGN KEY (name) REFERENCES cards
 );
+

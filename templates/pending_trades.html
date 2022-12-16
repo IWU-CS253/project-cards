@@ -1,0 +1,102 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<body>
+
+<h5>Here are your pending trades!</h5>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">User</th>
+            <th scope="col">Wants</th>
+            <th scope="col">For</th>
+            <th scope="col">Finalize</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        {% for user in users %}
+            <tr>
+            <td>{{ user }}</td>
+
+                <td>
+                    {% for cards in requested %}
+                        {% for card in cards %}
+                            {{ card }},
+                        {% endfor %}
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for cards in offered %}
+                        {% for card in cards %}
+                            {{ card }},
+                        {% endfor %}
+                    {% endfor %}
+                </td>
+            <td>
+                <form action="{{ url_for('finalize') }}" method="post" class="add-button">
+                    <input type="hidden" name="id" value="{{ trade_id }}" class="add-id">
+                    <input type="submit" class="btn btn-primary btn-lg" value="Finalize">
+                </form>
+            </td>
+            </tr>
+        {% endfor %}
+
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

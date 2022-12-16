@@ -136,15 +136,151 @@ def friend_inventory():
 def trade():
     return render_template('trade.html')
 
-
-@app.route('/trade_request')
+@app.route('/trade_request',methods=['GET', 'POST'])
 def trade_request():
-    return render_template('trade_request.html')
+    db = get_db()
+    user = request.args['username']
+    user_cur = db.execute("""SELECT users.user_id,collection.card_id,store.rank,store.image,name,collection.delete_id
+                                FROM users
+                              JOIN collection
+                                ON users.user_id = collection.user_id
+                              JOIN cards 
+                                ON cards.card_id= collection.card_id
+                              Join Store
+                                On cards.card_id= store.card_id
+                              WHERE users.username =?""",  [user])
+    cur = db.execute(
+        "SELECT * FROM cards JOIN collection ON collection.card_id = cards.card_id WHERE collection.user_id=?",
+        [session['current_user']])
+    collection = cur.fetchall()
+
+    user_inv = user_cur.fetchall()
+
+    return render_template('trade_request.html', deck=user_inv, collection=collection, user=user)
 
 
-@app.route('/trade_result')
+
+@app.route('/trade_result', methods=['POST'])
 def trade_result():
-    return render_template('trade_result.html')
+
+    db = get_db()
+
+    delete_id_r = request.form.getlist('delete_id_r')
+    cards_request = request.form.getlist('card_id_request')
+
+    delete_id_o = request.form.getlist('delete_id_o')
+    cards_offer = request.form.getlist('card_id_offer')
+    requested_user = request.form.get('user')
+
+    user_id = db.execute('SELECT user_id FROM users WHERE username = ?', requested_user)
+    user_id = user_id.fetchone()
+
+    most_recent = db.execute('SELECT trade_id FROM trades ORDER BY trade_id DESC')
+    most_recent = most_recent.fetchone()
+
+    if most_recent is None:
+        new_id = 1
+    else:
+        new_id = most_recent[0] + 1
+
+    i = 0
+    for card in cards_request:
+        db.execute('INSERT INTO trades (trade_id, request_id, offer_id, card_id, delete_id) VALUES(?, ?, ?, ?, ?)',
+                   [new_id, user_id[0], session['current_user'], card, delete_id_r[i]])
+        i += 1
+
+    j = 0
+    for card in cards_offer:
+        db.execute('INSERT INTO trades (trade_id, request_id, offer_id, card_id, delete_id) VALUES(?, ?, ?, ?, ?)',
+                   [new_id + 1, user_id[0], session['current_user'], card, delete_id_o[j]])
+        j += 1
+
+    db.commit()
+
+    request_cards = db.execute('SELECT * FROM store JOIN trades WHERE store.card_id = trades.card_id AND trades.offer_id = ?', [user_id[0]])
+    request_cards = request_cards.fetchall()
+
+    offer_cards = db.execute('SELECT * FROM store JOIN trades WHERE store.card_id = trades.card_id AND trades.request_id = ?', [session['current_user']])
+    offer_cards = offer_cards.fetchall()
+
+    return render_template('trade_result.html', offer=offer_cards, request=request_cards)
+
+
+@app.route('/pending_trades.html', methods=["GET", "POST"])
+def pending_trades():
+    db = get_db()
+
+    trade_offers = db.execute('SELECT offer_id FROM trades WHERE request_id = ? GROUP BY offer_id', [session['current_user']])
+    trade_offers = trade_offers.fetchall()
+
+    trade_ids = db.execute('SELECT trade_id FROM trades WHERE request_id = ? GROUP BY offer_id', [session['current_user']])
+    trade_ids = trade_ids.fetchall()
+    trade_id_list = [trade_id[0] for trade_id in trade_ids]
+
+    print(trade_id_list)
+
+    usernames = []
+    requested_cards_list = []
+    offered_cards_list = []
+
+    for i in range(len(trade_offers)):
+        user = db.execute('SELECT username FROM users WHERE user_id = ?', trade_offers[i])
+        user = user.fetchone()
+        usernames.append(user[0])
+
+        request_id = trade_ids[i][0] + 1
+
+        offered_cards = db.execute("""SELECT cards.name FROM cards JOIN trades WHERE trades.card_id = cards.card_id
+                                        AND trades.trade_id = ?""", trade_ids[i])
+        offered_cards_list.append([card[0] for card in offered_cards.fetchall()])
+
+        requested_cards = db.execute("""SELECT cards.name FROM cards JOIN trades WHERE trades.card_id = cards.card_id
+                                        AND trades.trade_id = ?""", [request_id])
+        requested_cards_list.append([card[0] for card in requested_cards.fetchall()])
+
+    return render_template('pending_trades.html', users=usernames, trade_id=trade_id_list,
+                           offered=offered_cards_list, requested=requested_cards_list)
+
+
+@app.route('/finalize', methods=["POST", "GET"])
+def finalize():
+
+    db = get_db()
+    trade_id = request.form.get('id')
+    trade_id2 = int(trade_id[1]) + 1
+
+    requested_user = db.execute('SELECT request_id FROM trades where trade_id = ? GROUP BY request_id', [trade_id[1]])
+    requested_user = requested_user.fetchone()
+
+    delete_id_r = db.execute('SELECT delete_id FROM trades where trade_id = ?', [trade_id2])
+    delete_id_r = delete_id_r.fetchall()
+
+    requested_from = db.execute('SELECT card_id FROM trades WHERE trade_id = ?', [trade_id2])
+    requested_from = requested_from.fetchall()
+
+    offered = db.execute('SELECT card_id FROM trades WHERE trade_id = ?', [trade_id[1]])
+    offered = offered.fetchall()
+
+    delete_id_o = db.execute('SELECT delete_id FROM trades WHERE trade_id = ?', [trade_id[1]])
+    delete_id_o = delete_id_o.fetchall()
+
+    i = 0
+    for card in requested_from:
+        db.execute('INSERT INTO collection(card_id, user_id) VALUES(?, ?)', [card[0], requested_user[0]])
+        db.execute('DELETE FROM collection WHERE delete_id = ? ', [delete_id_r[0][i]])
+        i += 1
+
+    j = 0
+    for card in offered:
+        db.execute('INSERT INTO collection(card_id, user_id) VALUES(?, ?)', [card[0], session['current_user']])
+        db.execute('DELETE FROM collection WHERE delete_id = ? AND user_id = ?', [delete_id_o[0][j], session['current_user']])
+        j += 1
+
+    db.execute('DELETE FROM trades WHERE trade_id = ? AND trade_id = ?', [trade_id[1], trade_id2])
+
+    db.commit()
+
+    return redirect(url_for('your_inventory'))
 
 
 @app.route('/transactions')
