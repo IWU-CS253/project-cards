@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<!----Used Boostrap page to help with position--->
+<div style="position: absolute; top: 0; right: 0; width: 100px; text-align:right;">
+    <a class="btn btn-primary btn-lg" href="{{ url_for('home') }}" role="button">Home</a>
+</div>
+
+<div class="container text-center">
+    <h1>Transaction History</h1>
+</div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">User</th>
+            <th scope="col">Card_ID</th>
+            <th scope="col">Wallet Change</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for transaction in transaction_history %}
+            <tr>
+            <td>{{ transaction.user_id }}</td>
+            <td>{{ transaction.card_id }}</td>
+            <td>{{ transaction.wallet_change }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

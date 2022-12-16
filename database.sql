@@ -2,11 +2,10 @@
 drop table if exists cards;
 CREATE TABLE cards (
     card_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name VARCHAR(20),
+    name VARCHAR(100),
 
     -- 5 ranks in increasing rarity
-    rank INT,
-    price INT
+    rank INT
 );
 
 
@@ -17,13 +16,11 @@ CREATE TABLE collection (
     delete_id INTEGER PRIMARY KEY AUTOINCREMENT,
     card_id INT,
     user_id INT,
+    image VARCHAR(150),
     FOREIGN KEY (card_id) REFERENCES cards,
-    FOREIGN KEY (user_id) REFERENCES users
+    FOREIGN KEY (user_id) REFERENCES users,
+    FOREIGN KEY (image) REFERENCES store
 );
-
-
-
-
 
 -- cards to be shown in the store table
 drop table if exists store;
@@ -31,8 +28,13 @@ CREATE TABLE store (
     card_id INT,
     rank VARCHAR(10),
     image VARCHAR(150),
-    pack VARCHAR(10),
-    price INT
+    pack1 BOOL,
+    pack2 BOOL,
+    pack3 BOOL,
+    pack4 BOOL,
+    pack5 BOOL,
+    pack6 BOOL,
+    pack7 BOOL
 );
 
 drop table if exists users;
@@ -54,12 +56,13 @@ CREATE TABLE friends (
 
 drop table if exists transactions;
 CREATE TABLE transactions (
-    user_id INT PRIMARY KEY,
+    user_id INT,
     card_id INT,
     wallet_change INT NOT NULL,
     FOREIGN KEY (card_id) REFERENCES cards,
     FOREIGN KEY (user_id) REFERENCES users
 );
+
 drop table if exists trades;
 CREATE TABLE trades (
     trade_id INT,
@@ -71,5 +74,17 @@ CREATE TABLE trades (
     FOREIGN KEY (offer_id) REFERENCES users,
     FOREIGN KEY (request_id) REFERENCES users,
     FOREIGN KEY (delete_id) REFERENCES collection
+);
+
+drop table if exists marketplace;
+CREATE TABLE marketplace (
+    market_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INT,
+    card_id INT,
+    name VARCHAR(100),
+    price INT,
+    FOREIGN KEY (card_id) REFERENCES cards,
+    FOREIGN KEY (user_id) REFERENCES users,
+    FOREIGN KEY (name) REFERENCES cards
 );
 

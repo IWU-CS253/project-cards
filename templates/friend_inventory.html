@@ -1,6 +1,11 @@
 {% extends "layout.html" %}
 {% block body %}
 
+<!----Used Boostrap page to help with position--->
+<div style="position: absolute; top: 0; right: 0; width: 100px; text-align:right;">
+    <a class="btn btn-primary btn-lg" href="{{ url_for('home') }}" role="button">Home</a>
+</div>
+
 <!----Filter friends cards by rarity--->
 <h1>Friend Inventory</h1>
     <h2>Filter friends cards by rarity!</h2>
@@ -95,10 +100,6 @@ this code is going to be inside the loop--->
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="container text-center">
-          <a class="btn btn-primary btn-lg" href="{{ url_for('connect_with_friends') }}" role="button">Home</a>
     </div>
 
 {% endblock %}

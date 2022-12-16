@@ -3,6 +3,12 @@
 
 {% extends "layout.html" %}
 {% block body %}
+
+<!----Used Boostrap page to help with position--->
+<div style="position: absolute; top: 0; right: 0; width: 100px; text-align:right;">
+    <a class="btn btn-primary btn-lg" href="{{ url_for('home') }}" role="button">Home</a>
+</div>
+
 <!---- We will need to loop through the users in the friends list,
 the same way we looped through entries to our flaskr website:
 this code is going to be inside the loop --->
@@ -12,7 +18,7 @@ this code is going to be inside the loop --->
             <div class="col">
                 <div class="input-group mb-3">
 
-                    <span class="input-group-text" id="basic-addon1">username</span>
+                    
 
                     <form action="{{ url_for('add_friend') }}" method="post">
                         <input name="new_friend" type="text" placeholder="Username">
@@ -39,28 +45,25 @@ this code is going to be inside the loop --->
     </tr>
   </thead>
     <ul class="friends">
-        <li><a href="{{ url_for('show_friends') }}">Friends List</a></li>
+        <li><a href="{{ url_for('show_friends') }}">Display Friends</a></li>
 
         {% for friend in friend_list %}
             <li>{{ friend }}</li>
-        <tbody>
-    <tr>
-      <td>{{friend}}</td>
-      <td><a class="btn btn-primary btn-lg" href="{{ url_for('friend_inventory') }}" role="button">Collection</a></td>
-      <td>
-          <form action="{{ url_for('home') }}" method="post" class="trade-button">
-              <button type="button" class="btn btn-primary btn-lg">Trade</button>
-          </form>
-      </td>
-    </tr>
         {% endfor %}
+        <tbody>
+
+        {% for friend in friend_list %}
+        <tr>
+            <td>{{friend}}</td>
+            <td><a class="btn btn-primary btn-lg" href="{{ url_for('friend_inventory') }}" role="button">Collection</a></td>
+            <td>
+                <a class="btn btn-primary btn-lg" href="{{ url_for('trade') }}" role="button">Trade</a>
+            </td>
+        </tr>
         </tbody>
+        {% endfor %}
 
     </ul>
 </table>
-
-    <div class="container text-center">
-          <a class="btn btn-primary btn-lg" href="{{ url_for('home') }}" role="button">Home</a>
-    </div>
 
 {% endblock %}
