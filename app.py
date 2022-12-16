@@ -132,11 +132,11 @@ pass them into template.
 
 
 """
-@app.route('/trade_request',methods=['GET'])
+@app.route('/trade_request',methods=['GET', 'POST'])
 def trade_request():
     db = get_db()
     user = request.args['username']
-    user_cur = db.execute("""SELECT users.user_id,collection.card_id,store.rank,store.price,store.image,name
+    user_cur = db.execute("""SELECT users.user_id,collection.card_id,store.rank,store.image,name
                                 FROM users
                               JOIN collection
                                 ON users.user_id = collection.user_id
@@ -152,7 +152,7 @@ def trade_request():
 
     user_inv = user_cur.fetchall()
 
-    return render_template('trade_request.html', deck=user_inv, collection=collection)
+    return render_template('trade_request.html', deck=user_inv, collection=collection, user=user)
 
 
 
@@ -160,9 +160,41 @@ def trade_request():
   
 
 
-@app.route('/trade_result')
+@app.route('/trade_result', methods=['POST'])
 def trade_result():
-    return render_template('trade_result.html')
+
+    db = get_db()
+
+    cards_request = request.form.getlist('card_id_request')
+    cards_offer = request.form.getlist('card_id_offer')
+    requested_user = request.form.get('user')
+
+    user_id = db.execute('SELECT user_id FROM users WHERE username = ?', requested_user)
+    user_id = user_id.fetchone()
+
+    most_recent = db.execute('SELECT trade_id FROM trades ORDER BY trade_id DESC')
+    most_recent = most_recent.fetchone()
+
+    if most_recent is None:
+        new_id = 1
+    else:
+        new_id = most_recent[0] + 1
+
+    for card in cards_request:
+        db.execute('INSERT INTO trades (trade_id, user_id, card_id) VALUES(?, ?)', [new_id, user_id[0], card])
+
+    for card in cards_offer:
+        db.execute('INSERT INTO trades (trade_id, user_id, card_id) VALUES(?, ?)', [new_id, session['current_user'], card])
+
+    db.commit()
+
+    request_cards = db.execute('SELECT * FROM store JOIN trades WHERE store.card_id = trades.card_id AND trades.user_id = ?', [user_id[0]])
+    request_cards = request_cards.fetchall()
+
+    offer_cards = db.execute('SELECT * FROM store JOIN trades WHERE store.card_id = trades.card_id AND trades.user_id = ?', [session['current_user']])
+    offer_cards = offer_cards.fetchall()
+
+    return render_template('trade_result.html', offer=offer_cards, request=request_cards)
 
 
 @app.route('/wallet_balance', methods=['POST'])

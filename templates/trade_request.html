@@ -6,20 +6,18 @@
 
 
 <h3>You Receive:</h3>
+    <form action="{{ url_for('trade_result') }}" method="post" class="form-check form-switch">
 <div class="row">
     {% for card in deck %}
+        <div class="col-sm-auto">
         <div class="container text-center">
-                <div class="col">
                     <div class="card" style="width: 18rem;">
-                        <img src="{{ card }}" style="height:350px;">
+                        <img src="{{ card.image }}" style="height:350px;">
                         <div class="card-body"><a>{{ card.name }}</a><br>
                             <div class="card-body"><a>{{ card.rank }}</a><br>
                                 <p class="card-text"><a>Trading Cards</a>
-                                <form action="{{ url_for('trade_result') }}" method="post" class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="mySwitch" name="card_id" value=yes" checked>
+                                    <input class="form-check-input" type="checkbox" id="mySwitch" name="card_id_request" value="{{ card.card_id }}" checked>
                                     <label class="mySwitch">Receive this Card?</label>
-                                </form>
-
                             </div>
                         </div>
                     </div>
@@ -31,20 +29,15 @@
     <h4>YOU OFFER</h4>
     <div class="row">
     {% for card in collection %}
+        <div class="col-sm-auto">
           <div class="container text-center">
-
-
-                <div class="col-sm-auto">
                     <div class="card" style="width: 18rem;">
-                        <img src="{{ card }}" style="height:350px;">
+                        <img src="{{ card.image }}" style="height:350px;">
                         <div class="card-body"><a>{{ card.name }}</a><br>
                             <div class="card-body"><a>{{ card.rank }}</a><br>
                                 <p class="card-text"><a>Trading Cards</a>
-                                <form action="{{ url_for('trade_result') }}" method="post" class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="mySwitch" name="card_id" value=yes" checked>
+                                    <input class="form-check-input" type="checkbox" id="mySwitch" name="card_id_offer" value="{{ card.card_id }}" checked>
                                     <label class="mySwitch">Offer this card:</label>
-                                </form>
-
                             </div>
                         </div>
                     </div>
@@ -57,8 +50,11 @@
 
             <div class="container text-center">
                 <a class="btn btn-primary btn-lg" href="{{ url_for('home') }}" role="button">Home</a>
-                 <a class="btn btn-primary btn-lg" href="{{ url_for('trade_result') }}" role="button">Submit offer!</a>
+                    <input type="hidden" name="user" value="{{ user }}" class="add-id">
+                    <input type="submit" class="btn btn-primary btn-lg" value="Submit Offer!">
+
             </div>
+    </form>
 
 
 

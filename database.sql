@@ -60,11 +60,12 @@ CREATE TABLE transactions (
     FOREIGN KEY (card_id) REFERENCES cards,
     FOREIGN KEY (user_id) REFERENCES users
 );
--- drop table if exists trades;
--- CREATE TABLE trades (
---     user1_id INT PRIMARY KEY,
---     card1_id INT,000.
---     FOREIGN KEY (card_id1) REFERENCES cards,
---     FOREIGN KEY (user_id1) REFERENCES users
--- );
+drop table if exists trades;
+CREATE TABLE trades (
+    trade_id INT PRIMARY KEY,
+    user_id INT,
+    card_id INT,
+    FOREIGN KEY (card_id) REFERENCES cards,
+    FOREIGN KEY (user_id) REFERENCES users
+);
 
