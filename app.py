@@ -145,10 +145,14 @@ def trade_request():
                               Join Store
                                 On cards.card_id= store.card_id
                               WHERE users.username =?""",  [user])
+    cur = db.execute(
+        "SELECT * FROM cards JOIN collection ON collection.card_id = cards.card_id WHERE collection.user_id=?",
+        [session['current_user']])
+    collection = cur.fetchall()
 
     user_inv = user_cur.fetchall()
 
-    return render_template('trade_request.html', deck=user_inv)
+    return render_template('trade_request.html', deck=user_inv, collection=collection)
 
 
 

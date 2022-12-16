@@ -6,10 +6,9 @@
 
 
 <h3>You Receive:</h3>
+<div class="row">
     {% for card in deck %}
         <div class="container text-center">
-
-            <div class="row">
                 <div class="col">
                     <div class="card" style="width: 18rem;">
                         <img src="{{ card }}" style="height:350px;">
@@ -26,13 +25,16 @@
                     </div>
                 </div>
               </div>
-            </div>
     {% endfor %}
+</div>
+
+    <h4>YOU OFFER</h4>
+    <div class="row">
     {% for card in collection %}
           <div class="container text-center">
 
-            <div class="row">
-                <div class="col">
+
+                <div class="col-sm-auto">
                     <div class="card" style="width: 18rem;">
                         <img src="{{ card }}" style="height:350px;">
                         <div class="card-body"><a>{{ card.name }}</a><br>
@@ -48,8 +50,9 @@
                     </div>
                 </div>
               </div>
-            </div>
+
     {% endfor %}
+    </div>
 
 
             <div class="container text-center">
