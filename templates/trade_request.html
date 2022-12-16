@@ -16,7 +16,8 @@
                         <div class="card-body"><a>{{ card.name }}</a><br>
                             <div class="card-body"><a>{{ card.rank }}</a><br>
                                 <p class="card-text"><a>Trading Cards</a>
-                                    <input class="form-check-input" type="checkbox" id="mySwitch" name="card_id_request" value="{{ card.card_id }}" checked>
+                                    <input class="form-check-input" type="checkbox" id="mySwitch" name="card_id_request" value="{{ card.card_id }}" unchecked>
+                                    <input type="hidden" name="delete_id_r" value="{{ card.delete_id }}" class="add-id">
                                     <label class="mySwitch">Receive this Card?</label>
                             </div>
                         </div>
@@ -36,7 +37,8 @@
                         <div class="card-body"><a>{{ card.name }}</a><br>
                             <div class="card-body"><a>{{ card.rank }}</a><br>
                                 <p class="card-text"><a>Trading Cards</a>
-                                    <input class="form-check-input" type="checkbox" id="mySwitch" name="card_id_offer" value="{{ card.card_id }}" checked>
+                                    <input class="form-check-input" type="checkbox" id="mySwitch" name="card_id_offer" value="{{ card.card_id }}" unchecked>
+                                    <input type="hidden" name="delete_id_o" value="{{ card.delete_id }}" class="add-id">
                                     <label class="mySwitch">Offer this card:</label>
                             </div>
                         </div>

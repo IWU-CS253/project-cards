@@ -62,10 +62,14 @@ CREATE TABLE transactions (
 );
 drop table if exists trades;
 CREATE TABLE trades (
-    trade_id INT PRIMARY KEY,
-    user_id INT,
+    trade_id INT,
+    request_id INT,
+    offer_id INT,
     card_id INT,
+    delete_id INT,
     FOREIGN KEY (card_id) REFERENCES cards,
-    FOREIGN KEY (user_id) REFERENCES users
+    FOREIGN KEY (offer_id) REFERENCES users,
+    FOREIGN KEY (request_id) REFERENCES users,
+    FOREIGN KEY (delete_id) REFERENCES collection
 );
 
