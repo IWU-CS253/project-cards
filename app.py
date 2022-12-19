@@ -498,14 +498,14 @@ def buy_card():
     add_cards(market_id)
     wallet_change = -1 * card_price[0]
     db.execute('INSERT INTO transactions(user_id, card_id, wallet_change) VALUES (?, ?, ?)',
-               [session['current_user'], card_id[0], wallet_change])
+               [session['current_user'], card_id, wallet_change])
 
     wallet_change_out = card_price[0]
     user_id_out = db.execute('SELECT user_id FROM marketplace WHERE market_id=?', [market_id])
     user_id_out = user_id_out.fetchone()
     sell(card_price[0], user_id_out)
     db.execute('INSERT INTO transactions(user_id, card_id, wallet_change) VALUES (?, ?, ?)',
-               [user_id_out[0], card_id[0], wallet_change_out])
+               [user_id_out[0], card_id, wallet_change_out])
 
     db.execute('DELETE FROM marketplace WHERE market_id=?', [market_id])
 
