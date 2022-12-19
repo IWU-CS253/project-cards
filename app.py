@@ -450,7 +450,7 @@ def add_friend():
 @app.route('/add_cards')
 def add_cards(market_id):
     db = get_db()
-    cur = db.execute('SELECT card_id FROM marketplace WHERE market_id=?', market_id)
+    cur = db.execute('SELECT card_id FROM marketplace WHERE market_id=?', [market_id])
     card = cur.fetchone()
 
     image = db.execute('SELECT image FROM store WHERE card_id=?', [card[0]])
@@ -490,24 +490,24 @@ def buy_card():
     card_id = request.form.get('card_id')
     market_id = request.form.get('market_id')
 
-    card_price = db.execute("SELECT price FROM marketplace WHERE market_id=?", market_id)
-    card_price = card_price.fetchone()[-1]
-    broke_check = purchase(card_price)
+    card_price = db.execute("SELECT price FROM marketplace WHERE market_id=?", [market_id])
+    card_price = card_price.fetchone()
+    broke_check = purchase(card_price[0])
     if broke_check:
         return redirect(url_for('marketplace'))
     add_cards(market_id)
-    wallet_change = -1 * card_price
+    wallet_change = -1 * card_price[0]
     db.execute('INSERT INTO transactions(user_id, card_id, wallet_change) VALUES (?, ?, ?)',
                [session['current_user'], card_id[0], wallet_change])
 
-    wallet_change_out = card_price
-    user_id_out = db.execute('SELECT user_id FROM marketplace WHERE market_id=?', market_id)
+    wallet_change_out = card_price[0]
+    user_id_out = db.execute('SELECT user_id FROM marketplace WHERE market_id=?', [market_id])
     user_id_out = user_id_out.fetchone()
-    sell(card_price, user_id_out)
+    sell(card_price[0], user_id_out)
     db.execute('INSERT INTO transactions(user_id, card_id, wallet_change) VALUES (?, ?, ?)',
                [user_id_out[0], card_id[0], wallet_change_out])
 
-    db.execute('DELETE FROM marketplace WHERE market_id=?', market_id)
+    db.execute('DELETE FROM marketplace WHERE market_id=?', [market_id])
 
     flash('Successfully purchased a card')
     db.commit()
@@ -531,8 +531,8 @@ def show_friends():
 def sell(amount, user_id):
     db = get_db()
     user_wallet = db.execute('SELECT wallet_balance FROM users WHERE user_id=?', user_id)
-    user_wallet = user_wallet.fetchone()[-1]
-    add_balance = (user_wallet + amount)
+    user_wallet = user_wallet.fetchone()
+    add_balance = (user_wallet[0] + amount)
 
     db.execute('UPDATE users SET wallet_balance=? WHERE user_id=?', [add_balance, user_id[0]])
     db.commit()
