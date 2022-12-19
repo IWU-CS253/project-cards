@@ -452,7 +452,12 @@ def add_cards(market_id):
     db = get_db()
     cur = db.execute('SELECT card_id FROM marketplace WHERE market_id=?', market_id)
     card = cur.fetchone()
-    db.execute('INSERT INTO collection(card_id, user_id) VALUES(?, ?)', [card[0], session['current_user']])
+
+    image = db.execute('SELECT image FROM store WHERE card_id=?', [card[0]])
+    image = image.fetchone()
+
+    db.execute('INSERT INTO collection(card_id, user_id, image) VALUES(?, ?, ?)',
+               [card[0], session['current_user'], image[0]])
     db.commit()
 
     return redirect(url_for('marketplace'))
