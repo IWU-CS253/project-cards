@@ -57,7 +57,10 @@ this code is going to be inside the loop --->
             <td>{{friend}}</td>
             <td><a class="btn btn-primary btn-lg" href="{{ url_for('friend_inventory') }}" role="button">Collection</a></td>
             <td>
-                <a class="btn btn-primary btn-lg" href="{{ url_for('trade') }}" role="button">Trade</a>
+                <form action="{{ url_for('trade_request') }}" methods="POST" class="add-button">
+                    <input type="submit" class="btn btn-primary btn-lg" value="Trade">
+                    <input type="hidden" class="add-id" name="username" value="{{ friend }}">
+                </form>
             </td>
         </tr>
         </tbody>
