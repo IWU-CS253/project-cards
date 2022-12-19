@@ -37,7 +37,8 @@ def init_db():
     cursor = connection.cursor()
     file = os.path.join(app.root_path, 'cards_csv/mix_packs.csv')
     contents = csv.reader(open(file))
-    insert_records = "INSERT INTO store (card_id, rank, image, pack1, pack2, pack3, pack4, pack5, pack6, pack7) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
+    insert_records = "INSERT INTO store (card_id, rank, image, pack1, pack2, pack3, pack4, pack5, pack6, pack7) " \
+                     "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
     cursor.executemany(insert_records, contents)
     file_cards = os.path.join(app.root_path, 'cards_csv/all_cards.csv')
     insert_cards = "INSERT INTO cards (card_id, name, rank) VALUES (?, ?, ?);"
@@ -127,9 +128,28 @@ def connect_with_friends():
     return render_template('friends.html')
 
 
-@app.route('/friend_inventory')
+@app.route('/friend_inventory', methods=["POST", "GET"])
 def friend_inventory():
-    return render_template('friend_inventory.html')
+    db = get_db()
+
+    username = request.form.get('user')
+    user_id = db.execute('SElECT user_id FROM users WHERE username = ?', [username])
+    user_id = user_id.fetchone()
+
+    if "rank" in request.args:
+        cur = db.execute('SELECT * FROM collection JOIN cards ON collection.card_id = cards.card_id '
+                         'WHERE collection.user_id=? AND cards.rank=?', [user_id[0], request.args['rank']])
+        collection = cur.fetchall()
+
+    else:
+        cur = db.execute('SELECT * FROM collection JOIN cards ON collection.card_id = cards.card_id '
+                         'WHERE collection.user_id=?', [user_id[0]])
+        collection = cur.fetchall()
+
+    cur = db.execute('SELECT DISTINCT rank FROM cards ORDER BY rank')
+    cards = cur.fetchall()
+
+    return render_template('friend_inventory.html', cards=cards, collection=collection)
 
 
 @app.route('/trade')
