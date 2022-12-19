@@ -141,8 +141,9 @@
         </tr>
         </thead>
         <tbody>
-        <tr>
+
             <div class="container-fluid">
+            <tr>
                 {% for card in cards %}
                     <td>{{ card.name }}</td>
                     <td>{{ card.price }}</td>
@@ -153,11 +154,10 @@
                             <input type="submit" class="btn btn-primary btn-lg" value="Buy">
                         </form>
                     </td>
-                    </td>
-                    </td>
+                    </tr>
                 {% endfor %}
             </div>
-        </tr>
+
         </tbody>
     </table>
 
