@@ -44,6 +44,12 @@ def init_db():
     insert_cards = "INSERT INTO cards (card_id, name, rank) VALUES (?, ?, ?);"
     contents_cards = csv.reader(open(file_cards))
     cursor.executemany(insert_cards, contents_cards)
+    admin_password = werkzeug.security.generate_password_hash('admin', method='pbkdf2:sha256',
+                                                         salt_length=16)
+    insert_admin = "INSERT INTO users (username, password, email, wallet_balance) VALUES ('admin', ?, " \
+                   "'admin', 999999999999)"
+    cursor.execute(insert_admin, [admin_password])
+
     connection.commit()
     connection.close()
 
