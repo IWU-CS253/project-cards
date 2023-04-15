@@ -2,17 +2,30 @@
 <html lang="en">
 {% extends "layout.html" %}
 {% block body %}
+    <div class="d-flex justify-content-center" stlye="margin: 50px;">
 <h1>Create Account</h1>
+    </div>
 <head>
+<div class="d-flex justify-content-center">
+        <div class="card" style="width: 25rem; margin: 50px">
+            <div class = "container text-center">
 <form action="{{ url_for('create_user') }}" method="POST">
-    <input class = 'form-control form-control-lg' type="text" name = "choose_username" placeholder ="Username">
-    <input class = 'form-control form-control-lg' type="text" name = "choose_password" placeholder = "Password">
-    <input class = 'form-control form-control-lg' type="text" name = "choose_email" placeholder="Email">
-    <input type = "Submit" value = "Submit">
+    <input class = 'form-control form-control-lg' type="text" name = "choose_username" placeholder ="Username"
+           style="margin: 1rem; width: 21rem">
+    <input class = 'form-control form-control-lg' type="text" name = "choose_password" placeholder = "Password"
+           style="margin: 1rem; width: 21rem">
+    <input class = 'form-control form-control-lg' type="text" name = "choose_email" placeholder="Email"
+           style="margin: 1rem; width: 21rem">
+    <input type = "Submit" value = "Submit" style = "margin: 20px">
 </form>
+            </div>
+        </div>
+</div>
 </head>
 <body>
-
+<div class="container text-center">
+    <a class="btn btn-primary" href="/" role="button">Back</a>
+</div>
 </body>
 </html>
 {% endblock %}
